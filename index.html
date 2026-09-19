@@ -14,41 +14,65 @@
     max-width: 1200px;
     margin: 0 auto;
   }
-  h1 { font-size: 28px; margin-bottom: 20px; color: #1d1d1f; }
-  h2 { font-size: 20px; margin: 20px 0 10px; color: #1d1d1f; }
-  .tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-  .tab {
-    padding: 10px 20px;
-    background: white;
-    border: 1px solid #d2d2d7;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: all 0.2s;
-  }
-  .tab.active { background: #0071e3; color: white; border-color: #0071e3; }
-  .tab:hover:not(.active) { background: #f5f5f7; }
+  h1 { font-size: 26px; margin-bottom: 20px; }
+  h2 { font-size: 18px; margin-bottom: 15px; color: #1d1d1f; }
+
   .card {
     background: white;
     border-radius: 12px;
     padding: 20px;
-    margin-bottom: 15px;
+    margin-bottom: 20px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
   }
-  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
-  .stat { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-  .stat-label { font-size: 13px; color: #86868b; margin-bottom: 5px; }
-  .stat-value { font-size: 32px; font-weight: 600; color: #1d1d1f; }
-  .stat-value.dispo { color: #34c759; }
-  .stat-value.bloque { color: #ff9500; }
-  input, select, button, textarea {
+
+  .date-bar {
+    display: flex;
+    gap: 15px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .date-bar .form-group { flex: 1; min-width: 160px; margin: 0; }
+  .date-bar button { width: auto; padding: 10px 24px; }
+
+  .stock-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+  }
+  .stock-card {
+    background: linear-gradient(135deg, #0071e3, #0077ed);
+    color: white;
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .stock-card.bumper {
+    background: linear-gradient(135deg, #34c759, #30d158);
+  }
+  .stock-card .label { font-size: 13px; opacity: 0.9; margin-bottom: 8px; }
+  .stock-card .value { font-size: 42px; font-weight: 700; line-height: 1; }
+  .stock-card .sub { font-size: 12px; opacity: 0.85; margin-top: 8px; }
+
+  .form-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .form-group { margin-bottom: 10px; }
+  .form-group label {
+    display: block;
+    font-size: 13px;
+    color: #86868b;
+    margin-bottom: 6px;
+  }
+  input, select, button {
     width: 100%;
     padding: 10px 12px;
     border: 1px solid #d2d2d7;
     border-radius: 8px;
     font-size: 14px;
     font-family: inherit;
-    margin-bottom: 10px;
+    background: white;
   }
   button {
     background: #0071e3;
@@ -60,14 +84,18 @@
   }
   button:hover { background: #0077ed; }
   button.danger { background: #ff3b30; }
-  button.danger:hover { background: #ff453a; }
   button.success { background: #34c759; }
-  button.success:hover { background: #30d158; }
-  .form-group { margin-bottom: 15px; }
-  .form-group label { display: block; font-size: 13px; color: #86868b; margin-bottom: 5px; }
+  button.small { width: auto; padding: 6px 12px; font-size: 13px; }
+
   table { width: 100%; border-collapse: collapse; font-size: 14px; }
   th, td { padding: 12px; text-align: left; border-bottom: 1px solid #f0f0f0; }
-  th { font-weight: 600; color: #86868b; font-size: 12px; text-transform: uppercase; }
+  th {
+    font-weight: 600;
+    color: #86868b;
+    font-size: 12px;
+    text-transform: uppercase;
+  }
+
   .badge {
     display: inline-block;
     padding: 4px 10px;
@@ -79,40 +107,50 @@
   .badge.confirme { background: #d1ecf1; color: #0c5460; }
   .badge.annule { background: #f8d7da; color: #721c24; }
   .badge.termine { background: #d4edda; color: #155724; }
-  .badge.en-reparation { background: #fff3cd; color: #856404; }
-  .badge.irreparable { background: #f8d7da; color: #721c24; }
-  .badge.repare { background: #d4edda; color: #155724; }
+
+  .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+
   .message { padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; }
   .message.success { background: #d4edda; color: #155724; }
   .message.error { background: #f8d7da; color: #721c24; }
-  .actions { display: flex; gap: 8px; }
-  .actions button { width: auto; padding: 6px 12px; font-size: 13px; margin: 0; }
-  .hidden { display: none; }
-  .loading { text-align: center; padding: 40px; color: #86868b; }
+
+  .loading { text-align: center; padding: 30px; color: #86868b; }
+  .empty { text-align: center; padding: 30px; color: #86868b; font-size: 14px; }
+
+  .filtre { max-width: 300px; margin-bottom: 15px; }
 </style>
 </head>
 <body>
 
 <h1>🔆 Gestion Panneaux LED</h1>
 
-<div class="tabs">
-  <div class="tab active" onclick="afficherOnglet('dashboard')">📊 Tableau de bord</div>
-  <div class="tab" onclick="afficherOnglet('reservation')">➕ Nouvelle réservation</div>
-  <div class="tab" onclick="afficherOnglet('liste')">📋 Mes réservations</div>
-  <div class="tab" onclick="afficherOnglet('panne')">⚠️ Signaler une panne</div>
-</div>
-
 <div id="message"></div>
 
-<!-- TABLEAU DE BORD -->
-<div id="dashboard" class="onglet">
-  <div class="loading">Chargement...</div>
+<div class="card">
+  <h2>📅 Vérifier la disponibilité pour une période</h2>
+  <div class="date-bar">
+    <div class="form-group">
+      <label>Date de début</label>
+      <input type="date" id="dateVerifDebut">
+    </div>
+    <div class="form-group">
+      <label>Date de fin</label>
+      <input type="date" id="dateVerifFin">
+    </div>
+    <button onclick="chargerStock()">Vérifier</button>
+  </div>
 </div>
 
-<!-- NOUVELLE RÉSERVATION -->
-<div id="reservation" class="onglet hidden">
-  <div class="card">
-    <h2>Nouvelle réservation</h2>
+<div class="card">
+  <h2>📦 Stock disponible <span id="periodeLabel" style="font-size:13px;color:#86868b;font-weight:400;"></span></h2>
+  <div id="stockGrid" class="stock-grid">
+    <div class="loading">Chargement...</div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>➕ Nouvelle réservation</h2>
+  <div class="form-row">
     <div class="form-group">
       <label>Chef de projet</label>
       <input type="text" id="chef" placeholder="Votre nom">
@@ -136,108 +174,77 @@
       <label>Date de fin</label>
       <input type="date" id="fin">
     </div>
-    <button onclick="creerReservation()">Réserver</button>
   </div>
+  <button onclick="creerReservation()">Réserver</button>
 </div>
 
-<!-- LISTE DES RÉSERVATIONS -->
-<div id="liste" class="onglet hidden">
-  <div class="card">
-    <h2>Mes réservations</h2>
-    <div class="form-group">
-      <label>Filtrer par chef de projet</label>
-      <input type="text" id="filtreChef" placeholder="Nom du chef de projet" oninput="chargerReservations()">
-    </div>
-    <div id="tableReservations" class="loading">Chargement...</div>
-  </div>
-</div>
-
-<!-- SIGNALER UNE PANNE -->
-<div id="panne" class="onglet hidden">
-  <div class="card">
-    <h2>Signaler un écran endommagé</h2>
-    <div class="form-group">
-      <label>Matériel</label>
-      <select id="panneMateriel">
-        <option value="LED">Panneaux LED</option>
-        <option value="BUMPER">Support Bumper</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>Quantité</label>
-      <input type="number" id="panneQuantite" min="1" value="1">
-    </div>
-    <div class="form-group">
-      <label>Motif</label>
-      <input type="text" id="panneMotif" placeholder="Ex: LED grillée">
-    </div>
-    <button onclick="signalerPanne()">Signaler</button>
-  </div>
+<div class="card">
+  <h2>📋 Réservations</h2>
+  <input type="text" class="filtre" id="filtreChef" placeholder="Filtrer par chef de projet..." oninput="chargerReservations()">
+  <div id="tableReservations" class="loading">Chargement...</div>
 </div>
 
 <script>
-// ⚠️ REMPLACEZ PAR VOTRE URL APPS SCRIPT
 const API_URL = "https://script.google.com/macros/s/AKfycbwV3pXjA5q7GCenjhXRfpdGF1RDTE9bGui-030CrbxWDHnLneMhDkJhR-knrVyWJdaCBg/exec";
 
-// ========== NAVIGATION ==========
-function afficherOnglet(nom) {
-  document.querySelectorAll('.onglet').forEach(function(el) { el.classList.add('hidden'); });
-  document.querySelectorAll('.tab').forEach(function(el) { el.classList.remove('active'); });
-  document.getElementById(nom).classList.remove('hidden');
-  event.target.classList.add('active');
-  
-  if (nom === 'dashboard') chargerDashboard();
-  if (nom === 'liste') chargerReservations();
+function formatDate(date) {
+  return date.toISOString().split('T')[0];
 }
 
-// ========== APPELS API ==========
+function aujourdhui() {
+  return formatDate(new Date());
+}
+
+function afficherMessage(texte, type) {
+  const el = document.getElementById('message');
+  el.innerHTML = '<div class="message ' + type + '">' + texte + '</div>';
+  setTimeout(function() { el.innerHTML = ''; }, 5000);
+}
+
 function appelAPI(action, methode, data) {
   let url = API_URL;
   let options = { method: methode || 'GET' };
-  
+
   if (methode === 'POST') {
     options.headers = { 'Content-Type': 'text/plain' };
     options.body = JSON.stringify(data);
   } else {
     url += '?action=' + action;
   }
-  
+
   return fetch(url, options).then(function(r) { return r.json(); });
 }
 
-// ========== TABLEAU DE BORD ==========
-function chargerDashboard() {
-  const el = document.getElementById('dashboard');
+function chargerStock() {
+  const debut = document.getElementById('dateVerifDebut').value || aujourdhui();
+  const fin = document.getElementById('dateVerifFin').value || aujourdhui();
+
+  const el = document.getElementById('stockGrid');
   el.innerHTML = '<div class="loading">Chargement...</div>';
-  
-  appelAPI('disponibilite', 'GET').then(function(data) {
-    let html = '<div class="stats">';
-    
-    data.forEach(function(item) {
-      html += '<div class="stat">';
-      html += '<div class="stat-label">' + item.type + ' — Total</div>';
-      html += '<div class="stat-value">' + item.total + '</div>';
-      html += '</div>';
-      
-      html += '<div class="stat">';
-      html += '<div class="stat-label">' + item.type + ' — Disponible</div>';
-      html += '<div class="stat-value dispo">' + item.disponible + '</div>';
-      html += '</div>';
-      
-      html += '<div class="stat">';
-      html += '<div class="stat-label">' + item.type + ' — Bloqué</div>';
-      html += '<div class="stat-value bloque">' + item.bloque + '</div>';
-      html += '</div>';
+
+  document.getElementById('periodeLabel').textContent =
+    '(du ' + debut + ' au ' + fin + ')';
+
+  let url = API_URL + '?action=disponibilite&debut=' + debut + '&fin=' + fin;
+  fetch(url)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      let html = '';
+      data.forEach(function(item) {
+        const cls = item.id === 'BUMPER' ? 'stock-card bumper' : 'stock-card';
+        html += '<div class="' + cls + '">';
+        html += '<div class="label">' + item.type + '</div>';
+        html += '<div class="value">' + item.disponible + '</div>';
+        html += '<div class="sub">disponible sur ' + item.total + ' en marche</div>';
+        html += '</div>';
+      });
+      el.innerHTML = html;
+    })
+    .catch(function(err) {
+      el.innerHTML = '<div class="message error">Erreur : ' + err.message + '</div>';
     });
-    
-    html += '</div>';
-    el.innerHTML = html;
-  }).catch(function(err) {
-    el.innerHTML = '<div class="message error">Erreur : ' + err.message + '</div>';
-  });
 }
 
-// ========== CRÉER UNE RÉSERVATION ==========
 function creerReservation() {
   const data = {
     action: 'creerReservation',
@@ -247,12 +254,12 @@ function creerReservation() {
     debut: document.getElementById('debut').value,
     fin: document.getElementById('fin').value
   };
-  
+
   if (!data.chef || !data.debut || !data.fin) {
     afficherMessage('Veuillez remplir tous les champs', 'error');
     return;
   }
-  
+
   appelAPI('creerReservation', 'POST', data).then(function(res) {
     if (res.succes) {
       afficherMessage('✅ Réservation créée avec succès', 'success');
@@ -260,6 +267,8 @@ function creerReservation() {
       document.getElementById('quantite').value = 1;
       document.getElementById('debut').value = '';
       document.getElementById('fin').value = '';
+      chargerReservations();
+      chargerStock();
     } else {
       afficherMessage('❌ ' + res.message, 'error');
     }
@@ -268,32 +277,34 @@ function creerReservation() {
   });
 }
 
-// ========== CHARGER LES RÉSERVATIONS ==========
 function chargerReservations() {
   const el = document.getElementById('tableReservations');
   el.innerHTML = '<div class="loading">Chargement...</div>';
   const filtre = document.getElementById('filtreChef').value.toLowerCase();
-  
+
   appelAPI('reservations', 'GET').then(function(data) {
     let html = '<table><thead><tr>';
     html += '<th>Chef</th><th>Matériel</th><th>Qté</th><th>Début</th><th>Fin</th><th>Statut</th><th>Actions</th>';
     html += '</tr></thead><tbody>';
-    
+
     let count = 0;
     data.forEach(function(r) {
       if (filtre && r.chef.toLowerCase().indexOf(filtre) === -1) return;
       count++;
-      
-      const badgeClass = r.statut.toLowerCase().replace('é', 'e').replace(' ', '-');
+
+      let badgeClass = 'reserve';
+      if (r.statut === 'Confirmé') badgeClass = 'confirme';
+      else if (r.statut === 'Annulé') badgeClass = 'annule';
+      else if (r.statut === 'Terminé') badgeClass = 'termine';
+
       let actions = '';
-      
       if (r.statut === 'Réservé') {
-        actions = '<button class="success" onclick="changerStatut(\'' + r.id + '\', \'Confirmé\')">Confirmer</button>';
-        actions += '<button class="danger" onclick="changerStatut(\'' + r.id + '\', \'Annulé\')">Annuler</button>';
+        actions = '<button class="small success" onclick="changerStatut(\'' + r.id + '\', \'Confirmé\')">Confirmer</button>';
+        actions += '<button class="small danger" onclick="changerStatut(\'' + r.id + '\', \'Annulé\')">Annuler</button>';
       } else if (r.statut === 'Confirmé') {
-        actions += '<button class="danger" onclick="changerStatut(\'' + r.id + '\', \'Annulé\')">Annuler</button>';
+        actions += '<button class="small danger" onclick="changerStatut(\'' + r.id + '\', \'Annulé\')">Annuler</button>';
       }
-      
+
       html += '<tr>';
       html += '<td>' + r.chef + '</td>';
       html += '<td>' + r.materiel + '</td>';
@@ -304,11 +315,11 @@ function chargerReservations() {
       html += '<td class="actions">' + actions + '</td>';
       html += '</tr>';
     });
-    
+
     if (count === 0) {
-      html += '<tr><td colspan="7" style="text-align:center;color:#86868b;">Aucune réservation</td></tr>';
+      html += '<tr><td colspan="7" class="empty">Aucune réservation</td></tr>';
     }
-    
+
     html += '</tbody></table>';
     el.innerHTML = html;
   }).catch(function(err) {
@@ -316,56 +327,27 @@ function chargerReservations() {
   });
 }
 
-// ========== CHANGER LE STATUT ==========
 function changerStatut(id, statut) {
   if (!confirm('Confirmer le passage au statut "' + statut + '" ?')) return;
-  
+
   appelAPI('changerStatut', 'POST', {action: 'changerStatut', id: id, statut: statut})
     .then(function(res) {
       if (res.succes) {
         afficherMessage('✅ Statut mis à jour', 'success');
         chargerReservations();
+        chargerStock();
       } else {
         afficherMessage('❌ ' + res.message, 'error');
       }
     });
 }
 
-// ========== SIGNALER UNE PANNE ==========
-function signalerPanne() {
-  const data = {
-    action: 'signalerEndommage',
-    materiel: document.getElementById('panneMateriel').value,
-    quantite: parseInt(document.getElementById('panneQuantite').value),
-    motif: document.getElementById('panneMotif').value
-  };
-  
-  if (!data.motif) {
-    afficherMessage('Veuillez indiquer un motif', 'error');
-    return;
-  }
-  
-  appelAPI('signalerEndommage', 'POST', data).then(function(res) {
-    if (res.succes) {
-      afficherMessage('✅ Panne signalée', 'success');
-      document.getElementById('panneQuantite').value = 1;
-      document.getElementById('panneMotif').value = '';
-    } else {
-      afficherMessage('❌ ' + res.message, 'error');
-    }
-  });
-}
-
-// ========== MESSAGE ==========
-function afficherMessage(texte, type) {
-  const el = document.getElementById('message');
-  el.innerHTML = '<div class="message ' + type + '">' + texte + '</div>';
-  setTimeout(function() { el.innerHTML = ''; }, 5000);
-}
-
-// ========== INITIALISATION ==========
 document.addEventListener('DOMContentLoaded', function() {
-  chargerDashboard();
+  const auj = aujourdhui();
+  document.getElementById('dateVerifDebut').value = auj;
+  document.getElementById('dateVerifFin').value = auj;
+  chargerStock();
+  chargerReservations();
 });
 </script>
 
