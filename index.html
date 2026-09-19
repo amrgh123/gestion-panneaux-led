@@ -10,64 +10,63 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: #f5f5f7;
     color: #1d1d1f;
-    padding: 20px;
-    max-width: 1200px;
+    padding: 15px;
+    max-width: 1100px;
     margin: 0 auto;
+    font-size: 14px;
   }
-  h1 { font-size: 26px; margin-bottom: 20px; }
-  h2 { font-size: 18px; margin-bottom: 15px; color: #1d1d1f; }
+  h1 { font-size: 22px; margin-bottom: 15px; }
+  h2 { font-size: 16px; margin-bottom: 12px; }
 
   .card {
     background: white;
-    border-radius: 12px;
-    padding: 20px;
-    margin-bottom: 20px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
   }
 
   .date-bar {
     display: flex;
-    gap: 15px;
+    gap: 10px;
     align-items: flex-end;
     flex-wrap: wrap;
   }
-  .date-bar .form-group { flex: 1; min-width: 160px; margin: 0; }
-  .date-bar button { width: auto; padding: 10px 24px; }
+  .date-bar .form-group { flex: 1; min-width: 140px; margin: 0; }
+  .date-bar button { width: auto; padding: 9px 20px; }
 
   .stock-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
   }
   .stock-card {
-    background: linear-gradient(135deg, #0071e3, #0077ed);
+    background: #0071e3;
     color: white;
-    border-radius: 12px;
-    padding: 20px;
+    border-radius: 10px;
+    padding: 16px;
   }
-  .stock-card.bumper {
-    background: linear-gradient(135deg, #34c759, #30d158);
-  }
-  .stock-card .label { font-size: 13px; opacity: 0.9; margin-bottom: 8px; }
-  .stock-card .value { font-size: 42px; font-weight: 700; line-height: 1; }
-  .stock-card .sub { font-size: 12px; opacity: 0.85; margin-top: 8px; }
+  .stock-card.bumper { background: #34c759; }
+  .stock-card .label { font-size: 12px; opacity: 0.9; margin-bottom: 6px; }
+  .stock-card .value { font-size: 36px; font-weight: 700; line-height: 1; }
+  .stock-card .sub { font-size: 11px; opacity: 0.85; margin-top: 6px; }
 
   .form-row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px;
-    margin-bottom: 12px;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 10px;
+    margin-bottom: 10px;
   }
-  .form-group { margin-bottom: 10px; }
+  .form-group { margin-bottom: 8px; }
   .form-group label {
     display: block;
-    font-size: 13px;
+    font-size: 12px;
     color: #86868b;
-    margin-bottom: 6px;
+    margin-bottom: 4px;
   }
   input, select, button {
     width: 100%;
-    padding: 10px 12px;
+    padding: 9px 11px;
     border: 1px solid #d2d2d7;
     border-radius: 8px;
     font-size: 14px;
@@ -80,43 +79,61 @@
     border: none;
     cursor: pointer;
     font-weight: 500;
-    transition: background 0.2s;
   }
   button:hover { background: #0077ed; }
+  button:disabled { background: #b0b0b0; cursor: not-allowed; }
   button.danger { background: #ff3b30; }
   button.success { background: #34c759; }
-  button.small { width: auto; padding: 6px 12px; font-size: 13px; }
+  button.small { width: auto; padding: 5px 10px; font-size: 12px; }
 
-  table { width: 100%; border-collapse: collapse; font-size: 14px; }
-  th, td { padding: 12px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { padding: 9px; text-align: left; border-bottom: 1px solid #f0f0f0; }
   th {
     font-weight: 600;
     color: #86868b;
-    font-size: 12px;
+    font-size: 11px;
     text-transform: uppercase;
   }
 
   .badge {
     display: inline-block;
-    padding: 4px 10px;
+    padding: 3px 8px;
     border-radius: 20px;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 500;
   }
   .badge.reserve { background: #fff3cd; color: #856404; }
   .badge.confirme { background: #d1ecf1; color: #0c5460; }
   .badge.termine { background: #d4edda; color: #155724; }
 
-  .actions { display: flex; gap: 6px; flex-wrap: wrap; }
+  .actions { display: flex; gap: 5px; flex-wrap: wrap; }
 
-  .message { padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; }
+  .message { padding: 10px; border-radius: 8px; margin-bottom: 12px; font-size: 13px; }
   .message.success { background: #d4edda; color: #155724; }
   .message.error { background: #f8d7da; color: #721c24; }
+  .message.info { background: #d1ecf1; color: #0c5460; }
 
-  .loading { text-align: center; padding: 30px; color: #86868b; }
-  .empty { text-align: center; padding: 30px; color: #86868b; font-size: 14px; }
+  .loading {
+    text-align: center;
+    padding: 20px;
+    color: #86868b;
+    font-size: 13px;
+  }
+  .spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #d2d2d7;
+    border-top-color: #0071e3;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+    margin-right: 8px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
 
-  .filtre { max-width: 300px; margin-bottom: 15px; }
+  .empty { text-align: center; padding: 20px; color: #86868b; font-size: 13px; }
+  .filtre { max-width: 260px; margin-bottom: 12px; }
 </style>
 </head>
 <body>
@@ -126,7 +143,7 @@
 <div id="message"></div>
 
 <div class="card">
-  <h2>📅 Vérifier la disponibilité pour une période</h2>
+  <h2>📅 Vérifier la disponibilité</h2>
   <div class="date-bar">
     <div class="form-group">
       <label>Date de début</label>
@@ -136,14 +153,14 @@
       <label>Date de fin</label>
       <input type="date" id="dateVerifFin">
     </div>
-    <button onclick="chargerStock()">Vérifier</button>
+    <button id="btnVerif" onclick="chargerStock()">Vérifier</button>
   </div>
 </div>
 
 <div class="card">
-  <h2>📦 Stock disponible <span id="periodeLabel" style="font-size:13px;color:#86868b;font-weight:400;"></span></h2>
+  <h2>📦 Stock disponible <span id="periodeLabel" style="font-size:12px;color:#86868b;font-weight:400;"></span></h2>
   <div id="stockGrid" class="stock-grid">
-    <div class="loading">Chargement...</div>
+    <div class="loading"><span class="spinner"></span>Chargement...</div>
   </div>
 </div>
 
@@ -174,18 +191,23 @@
       <input type="date" id="fin">
     </div>
   </div>
-  <button onclick="creerReservation()">Réserver</button>
+  <button id="btnResa" onclick="creerReservation()">Réserver</button>
 </div>
 
 <div class="card">
-  <h2>📋 Réservations</h2>
-  <input type="text" class="filtre" id="filtreChef" placeholder="Filtrer par chef de projet..." oninput="chargerReservations()">
-  <div id="tableReservations" class="loading">Chargement...</div>
+  <h2>📋 Réservations
+    <button class="small" onclick="chargerReservations()" style="margin-left:8px;">🔄 Rafraîchir</button>
+  </h2>
+  <input type="text" class="filtre" id="filtreChef" placeholder="Filtrer par chef de projet..." oninput="filtrerReservations()">
+  <div id="tableReservations" class="loading"><span class="spinner"></span>Chargement...</div>
 </div>
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbwV3pXjA5q7GCenjhXRfpdGF1RDTE9bGui-030CrbxWDHnLneMhDkJhR-knrVyWJdaCBg/exec";
 
+let reservationsCache = [];
+
+// ============ UTILITAIRES ============
 function formatDate(date) {
   return date.getFullYear() + "-" +
          String(date.getMonth() + 1).padStart(2, '0') + "-" +
@@ -199,73 +221,95 @@ function aujourdhui() {
 function afficherMessage(texte, type) {
   const el = document.getElementById('message');
   el.innerHTML = '<div class="message ' + type + '">' + texte + '</div>';
-  setTimeout(function() { el.innerHTML = ''; }, 5000);
+  setTimeout(function() { el.innerHTML = ''; }, 4000);
+}
+
+// ============ FETCH ROBUSTE AVEC RETRY ============
+function fetchJSON(url, tentatives) {
+  tentatives = tentatives || 3;
+
+  return fetch(url, { redirect: 'follow' })
+    .then(function(r) { return r.text(); })
+    .then(function(text) {
+      // Détecter si c'est du HTML (page d'erreur ou de connexion)
+      if (text.trim().startsWith("<")) {
+        throw new Error("HTML_RESPONSE");
+      }
+      try {
+        return JSON.parse(text);
+      } catch (e) {
+        throw new Error("PARSE_ERROR");
+      }
+    })
+    .catch(function(err) {
+      if (tentatives > 1 && (err.message === "HTML_RESPONSE" || err.message === "PARSE_ERROR")) {
+        // Attendre 1 seconde puis réessayer
+        return new Promise(function(resolve) {
+          setTimeout(resolve, 1000);
+        }).then(function() {
+          return fetchJSON(url, tentatives - 1);
+        });
+      }
+      throw err;
+    });
 }
 
 function appelAPI(action, methode, data) {
   let url = API_URL;
-  let options = {
-    method: methode || 'GET',
-    redirect: 'follow'
-  };
+  let options = { redirect: 'follow' };
 
   if (methode === 'POST') {
+    options.method = 'POST';
     options.headers = { 'Content-Type': 'text/plain;charset=utf-8' };
     options.body = JSON.stringify(data);
+
+    return fetch(url, options)
+      .then(function(r) { return r.text(); })
+      .then(function(text) {
+        if (text.trim().startsWith("<")) throw new Error("HTML_RESPONSE");
+        return JSON.parse(text);
+      });
   } else {
     url += '?action=' + action;
+    return fetchJSON(url);
   }
-
-  return fetch(url, options)
-    .then(function(r) { return r.text(); })
-    .then(function(text) {
-      try {
-        return JSON.parse(text);
-      } catch (e) {
-        console.error("Réponse non-JSON :", text.substring(0, 200));
-        throw new Error("L'API a renvoyé du HTML au lieu de JSON.");
-      }
-    });
 }
 
+// ============ STOCK ============
 function chargerStock() {
   const debut = document.getElementById('dateVerifDebut').value || aujourdhui();
   const fin = document.getElementById('dateVerifFin').value || aujourdhui();
 
   const el = document.getElementById('stockGrid');
-  el.innerHTML = '<div class="loading">Chargement...</div>';
+  el.innerHTML = '<div class="loading"><span class="spinner"></span>Chargement...</div>';
 
-  document.getElementById('periodeLabel').textContent =
-    '(du ' + debut + ' au ' + fin + ')';
+  document.getElementById('periodeLabel').textContent = '(du ' + debut + ' au ' + fin + ')';
 
-  let url = API_URL + '?action=disponibilite&debut=' + debut + '&fin=' + fin;
-  fetch(url, { redirect: 'follow' })
-    .then(function(r) { return r.text(); })
-    .then(function(text) {
-      let data;
-      try {
-        data = JSON.parse(text);
-      } catch (e) {
-        el.innerHTML = '<div class="message error">Erreur : l\'API renvoie du HTML. Vérifiez le déploiement Apps Script (accès "Tout le monde").</div>';
-        return;
-      }
+  const url = API_URL + '?action=disponibilite&debut=' + debut + '&fin=' + fin + '&t=' + Date.now();
 
+  fetchJSON(url)
+    .then(function(data) {
       let html = '';
       data.forEach(function(item) {
         const cls = item.id === 'BUMPER' ? 'stock-card bumper' : 'stock-card';
         html += '<div class="' + cls + '">';
         html += '<div class="label">' + item.type + '</div>';
         html += '<div class="value">' + item.disponible + '</div>';
-        html += '<div class="sub">disponible sur ' + item.total + ' en marche</div>';
+        html += '<div class="sub">sur ' + item.total + ' en marche</div>';
         html += '</div>';
       });
       el.innerHTML = html;
     })
     .catch(function(err) {
-      el.innerHTML = '<div class="message error">Erreur : ' + err.message + '</div>';
+      if (err.message === "HTML_RESPONSE") {
+        el.innerHTML = '<div class="message error">Serveur en cours de chargement. Cliquez sur "Vérifier" pour réessayer.</div>';
+      } else {
+        el.innerHTML = '<div class="message error">Erreur : ' + err.message + '</div>';
+      }
     });
 }
 
+// ============ RÉSERVATION ============
 function creerReservation() {
   const data = {
     action: 'creerReservation',
@@ -281,75 +325,107 @@ function creerReservation() {
     return;
   }
 
-  appelAPI('creerReservation', 'POST', data).then(function(res) {
-    if (res.succes) {
-      afficherMessage('✅ Réservation créée avec succès', 'success');
-      document.getElementById('chef').value = '';
-      document.getElementById('quantite').value = 1;
-      document.getElementById('debut').value = '';
-      document.getElementById('fin').value = '';
-      chargerReservations();
-      chargerStock();
-    } else {
-      afficherMessage('❌ ' + res.message, 'error');
-    }
-  }).catch(function(err) {
-    afficherMessage('Erreur : ' + err.message, 'error');
-  });
+  const btn = document.getElementById('btnResa');
+  btn.disabled = true;
+  btn.textContent = 'Envoi...';
+
+  appelAPI('creerReservation', 'POST', data)
+    .then(function(res) {
+      if (res.succes) {
+        afficherMessage('✅ Réservation créée', 'success');
+        document.getElementById('chef').value = '';
+        document.getElementById('quantite').value = 1;
+        document.getElementById('debut').value = '';
+        document.getElementById('fin').value = '';
+        chargerReservations();
+        chargerStock();
+      } else {
+        afficherMessage('❌ ' + res.message, 'error');
+      }
+    })
+    .catch(function(err) {
+      if (err.message === "HTML_RESPONSE") {
+        afficherMessage('Serveur surchargé. Réessayez dans quelques secondes.', 'error');
+      } else {
+        afficherMessage('Erreur : ' + err.message, 'error');
+      }
+    })
+    .finally(function() {
+      btn.disabled = false;
+      btn.textContent = 'Réserver';
+    });
 }
 
+// ============ RÉSERVATIONS ============
 function chargerReservations() {
   const el = document.getElementById('tableReservations');
-  el.innerHTML = '<div class="loading">Chargement...</div>';
+  el.innerHTML = '<div class="loading"><span class="spinner"></span>Chargement...</div>';
+
+  appelAPI('reservations', 'GET')
+    .then(function(data) {
+      reservationsCache = data;
+      afficherReservations();
+    })
+    .catch(function(err) {
+      if (err.message === "HTML_RESPONSE") {
+        el.innerHTML = '<div class="message error">Serveur en cours de chargement. Cliquez sur "Rafraîchir".</div>';
+      } else {
+        el.innerHTML = '<div class="message error">Erreur : ' + err.message + '</div>';
+      }
+    });
+}
+
+function filtrerReservations() {
+  afficherReservations();
+}
+
+function afficherReservations() {
+  const el = document.getElementById('tableReservations');
   const filtre = document.getElementById('filtreChef').value.toLowerCase();
 
-  appelAPI('reservations', 'GET').then(function(data) {
-    let html = '<table><thead><tr>';
-    html += '<th>Chef</th><th>Matériel</th><th>Qté</th><th>Début</th><th>Fin</th><th>Statut</th><th>Actions</th>';
-    html += '</tr></thead><tbody>';
+  let html = '<table><thead><tr>';
+  html += '<th>Chef</th><th>Matériel</th><th>Qté</th><th>Début</th><th>Fin</th><th>Statut</th><th>Actions</th>';
+  html += '</tr></thead><tbody>';
 
-    let count = 0;
-    data.forEach(function(r) {
-      if (r.statut === 'Annulé') return;
-      if (filtre && r.chef.toLowerCase().indexOf(filtre) === -1) return;
-      count++;
+  let count = 0;
+  reservationsCache.forEach(function(r) {
+    if (r.statut === 'Annulé') return;
+    if (filtre && r.chef.toLowerCase().indexOf(filtre) === -1) return;
+    count++;
 
-      let badgeClass = 'reserve';
-      if (r.statut === 'Confirmé') badgeClass = 'confirme';
-      else if (r.statut === 'Terminé') badgeClass = 'termine';
+    let badgeClass = 'reserve';
+    if (r.statut === 'Confirmé') badgeClass = 'confirme';
+    else if (r.statut === 'Terminé') badgeClass = 'termine';
 
-      let actions = '';
-      if (r.statut === 'Réservé') {
-        actions = '<button class="small success" onclick="changerStatut(\'' + r.id + '\', \'Confirmé\')">Confirmer</button>';
-        actions += '<button class="small danger" onclick="changerStatut(\'' + r.id + '\', \'Annulé\')">Annuler</button>';
-      } else if (r.statut === 'Confirmé') {
-        actions += '<button class="small danger" onclick="changerStatut(\'' + r.id + '\', \'Annulé\')">Annuler</button>';
-      }
-
-      html += '<tr>';
-      html += '<td>' + r.chef + '</td>';
-      html += '<td>' + r.materiel + '</td>';
-      html += '<td>' + r.quantite + '</td>';
-      html += '<td>' + r.debut + '</td>';
-      html += '<td>' + r.fin + '</td>';
-      html += '<td><span class="badge ' + badgeClass + '">' + r.statut + '</span></td>';
-      html += '<td class="actions">' + actions + '</td>';
-      html += '</tr>';
-    });
-
-    if (count === 0) {
-      html += '<tr><td colspan="7" class="empty">Aucune réservation</td></tr>';
+    let actions = '';
+    if (r.statut === 'Réservé') {
+      actions = '<button class="small success" onclick="changerStatut(\'' + r.id + '\', \'Confirmé\')">Confirmer</button>';
+      actions += '<button class="small danger" onclick="changerStatut(\'' + r.id + '\', \'Annulé\')">Annuler</button>';
+    } else if (r.statut === 'Confirmé') {
+      actions += '<button class="small danger" onclick="changerStatut(\'' + r.id + '\', \'Annulé\')">Annuler</button>';
     }
 
-    html += '</tbody></table>';
-    el.innerHTML = html;
-  }).catch(function(err) {
-    el.innerHTML = '<div class="message error">Erreur : ' + err.message + '</div>';
+    html += '<tr>';
+    html += '<td>' + r.chef + '</td>';
+    html += '<td>' + r.materiel + '</td>';
+    html += '<td>' + r.quantite + '</td>';
+    html += '<td>' + r.debut + '</td>';
+    html += '<td>' + r.fin + '</td>';
+    html += '<td><span class="badge ' + badgeClass + '">' + r.statut + '</span></td>';
+    html += '<td class="actions">' + actions + '</td>';
+    html += '</tr>';
   });
+
+  if (count === 0) {
+    html += '<tr><td colspan="7" class="empty">Aucune réservation</td></tr>';
+  }
+
+  html += '</tbody></table>';
+  el.innerHTML = html;
 }
 
 function changerStatut(id, statut) {
-  if (!confirm('Confirmer le passage au statut "' + statut + '" ?')) return;
+  if (!confirm('Passer au statut "' + statut + '" ?')) return;
 
   appelAPI('changerStatut', 'POST', {action: 'changerStatut', id: id, statut: statut})
     .then(function(res) {
@@ -360,15 +436,21 @@ function changerStatut(id, statut) {
       } else {
         afficherMessage('❌ ' + res.message, 'error');
       }
+    })
+    .catch(function(err) {
+      afficherMessage('Erreur : ' + err.message, 'error');
     });
 }
 
+// ============ INIT ============
 document.addEventListener('DOMContentLoaded', function() {
   const auj = aujourdhui();
   document.getElementById('dateVerifDebut').value = auj;
   document.getElementById('dateVerifFin').value = auj;
+
+  // Petit délai pour éviter que les 2 appels partent exactement en même temps
   chargerStock();
-  chargerReservations();
+  setTimeout(chargerReservations, 800);
 });
 </script>
 
