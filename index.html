@@ -105,7 +105,6 @@
   }
   .badge.reserve { background: #fff3cd; color: #856404; }
   .badge.confirme { background: #d1ecf1; color: #0c5460; }
-  .badge.annule { background: #f8d7da; color: #721c24; }
   .badge.termine { background: #d4edda; color: #155724; }
 
   .actions { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -188,7 +187,9 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbwV3pXjA5q7GCenjhXRfpdGF1RDTE9bGui-030CrbxWDHnLneMhDkJhR-knrVyWJdaCBg/exec";
 
 function formatDate(date) {
-  return date.toISOString().split('T')[0];
+  return date.getFullYear() + "-" +
+         String(date.getMonth() + 1).padStart(2, '0') + "-" +
+         String(date.getDate()).padStart(2, '0');
 }
 
 function aujourdhui() {
@@ -201,7 +202,6 @@ function afficherMessage(texte, type) {
   setTimeout(function() { el.innerHTML = ''; }, 5000);
 }
 
-// ============ APPEL API CORRIGÉ ============
 function appelAPI(action, methode, data) {
   let url = API_URL;
   let options = {
@@ -228,7 +228,6 @@ function appelAPI(action, methode, data) {
     });
 }
 
-// ============ CHARGER LE STOCK ============
 function chargerStock() {
   const debut = document.getElementById('dateVerifDebut').value || aujourdhui();
   const fin = document.getElementById('dateVerifFin').value || aujourdhui();
@@ -267,7 +266,6 @@ function chargerStock() {
     });
 }
 
-// ============ CRÉER UNE RÉSERVATION ============
 function creerReservation() {
   const data = {
     action: 'creerReservation',
@@ -300,7 +298,6 @@ function creerReservation() {
   });
 }
 
-// ============ CHARGER LES RÉSERVATIONS ============
 function chargerReservations() {
   const el = document.getElementById('tableReservations');
   el.innerHTML = '<div class="loading">Chargement...</div>';
@@ -313,12 +310,12 @@ function chargerReservations() {
 
     let count = 0;
     data.forEach(function(r) {
+      if (r.statut === 'Annulé') return;
       if (filtre && r.chef.toLowerCase().indexOf(filtre) === -1) return;
       count++;
 
       let badgeClass = 'reserve';
       if (r.statut === 'Confirmé') badgeClass = 'confirme';
-      else if (r.statut === 'Annulé') badgeClass = 'annule';
       else if (r.statut === 'Terminé') badgeClass = 'termine';
 
       let actions = '';
@@ -351,7 +348,6 @@ function chargerReservations() {
   });
 }
 
-// ============ CHANGER LE STATUT ============
 function changerStatut(id, statut) {
   if (!confirm('Confirmer le passage au statut "' + statut + '" ?')) return;
 
@@ -367,7 +363,6 @@ function changerStatut(id, statut) {
     });
 }
 
-// ============ INITIALISATION ============
 document.addEventListener('DOMContentLoaded', function() {
   const auj = aujourdhui();
   document.getElementById('dateVerifDebut').value = auj;
