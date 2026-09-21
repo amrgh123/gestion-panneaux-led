@@ -3,27 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gestion Panneaux LED</title>
+<title>Gestion Panneaux LED — DuoDisplay</title>
+<link rel="icon" href="logo.png" type="image/png">
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #f5f5f7;
-    color: #1d1d1f;
+    background: #f4f5f1;
+    color: #293a34;
     padding: 15px;
     max-width: 1100px;
     margin: 0 auto;
     font-size: 14px;
   }
-  h1 { font-size: 22px; margin-bottom: 15px; }
-  h2 { font-size: 16px; margin-bottom: 12px; }
+
+  /* ===== EN-TÊTE AVEC LOGO ===== */
+  .header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+    padding: 15px 20px;
+    background: #293a34;
+    border-radius: 6px;
+  }
+  .header img {
+    height: 45px;
+    width: auto;
+  }
+  .header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #d7deca;
+    letter-spacing: -0.5px;
+  }
+
+  h2 { font-size: 16px; margin-bottom: 12px; color: #293a34; }
 
   .card {
     background: white;
-    border-radius: 10px;
-    padding: 15px;
+    border-radius: 6px;
+    padding: 18px;
     margin-bottom: 15px;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.06);
+    border: 1px solid #e2e5dc;
+    box-shadow: 0 1px 3px rgba(41,58,52,0.06);
   }
 
   .date-bar {
@@ -33,7 +56,7 @@
     flex-wrap: wrap;
   }
   .date-bar .form-group { flex: 1; min-width: 140px; margin: 0; }
-  .date-bar button { width: auto; padding: 9px 20px; }
+  .date-bar button { width: auto; padding: 9px 22px; }
 
   .stock-grid {
     display: grid;
@@ -41,15 +64,25 @@
     gap: 12px;
   }
   .stock-card {
-    background: #0071e3;
-    color: white;
-    border-radius: 10px;
-    padding: 16px;
+    background: #293a34;
+    color: #d7deca;
+    border-radius: 6px;
+    padding: 18px;
+    border-left: 4px solid #d7deca;
   }
-  .stock-card.bumper { background: #34c759; }
-  .stock-card .label { font-size: 12px; opacity: 0.9; margin-bottom: 6px; }
-  .stock-card .value { font-size: 36px; font-weight: 700; line-height: 1; }
-  .stock-card .sub { font-size: 11px; opacity: 0.85; margin-top: 6px; }
+  .stock-card.bumper {
+    background: #293a34;
+    border-left-color: #8ba888;
+  }
+  .stock-card .label {
+    font-size: 11px;
+    opacity: 0.85;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .stock-card .value { font-size: 38px; font-weight: 700; line-height: 1; color: #d7deca; }
+  .stock-card .sub { font-size: 11px; opacity: 0.7; margin-top: 8px; }
 
   .form-row {
     display: grid;
@@ -60,71 +93,92 @@
   .form-group { margin-bottom: 8px; }
   .form-group label {
     display: block;
-    font-size: 12px;
-    color: #86868b;
-    margin-bottom: 4px;
+    font-size: 11px;
+    color: #5a6b62;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
   }
   input, select, button {
     width: 100%;
-    padding: 9px 11px;
-    border: 1px solid #d2d2d7;
-    border-radius: 8px;
+    padding: 10px 12px;
+    border: 1px solid #c8cfc0;
+    border-radius: 4px;
     font-size: 14px;
     font-family: inherit;
     background: white;
+    color: #293a34;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  input:focus, select:focus {
+    outline: none;
+    border-color: #293a34;
+    box-shadow: 0 0 0 3px rgba(41,58,52,0.1);
   }
   button {
-    background: #0071e3;
-    color: white;
+    background: #293a34;
+    color: #d7deca;
     border: none;
     cursor: pointer;
-    font-weight: 500;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 12px;
+    transition: background 0.15s;
   }
-  button:hover { background: #0077ed; }
-  button:disabled { background: #b0b0b0; cursor: not-allowed; }
-  button.danger { background: #ff3b30; }
-  button.success { background: #34c759; }
-  button.small { width: auto; padding: 5px 10px; font-size: 12px; }
+  button:hover { background: #3a4f47; }
+  button:disabled { background: #a8b0a5; cursor: not-allowed; }
+  button.danger { background: #a12c2c; color: #f5e5e5; }
+  button.danger:hover { background: #8a2424; }
+  button.success { background: #4a7a4a; color: #e8f0e0; }
+  button.success:hover { background: #3d663d; }
+  button.small { width: auto; padding: 6px 12px; font-size: 11px; }
 
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th, td { padding: 9px; text-align: left; border-bottom: 1px solid #f0f0f0; }
+  th, td { padding: 10px 9px; text-align: left; border-bottom: 1px solid #e8ebe4; }
   th {
-    font-weight: 600;
-    color: #86868b;
-    font-size: 11px;
+    font-weight: 700;
+    color: #293a34;
+    font-size: 10px;
     text-transform: uppercase;
+    letter-spacing: 0.8px;
+    background: #f4f5f1;
+    border-bottom: 2px solid #293a34;
   }
 
   .badge {
     display: inline-block;
-    padding: 3px 8px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 3px;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
-  .badge.reserve { background: #fff3cd; color: #856404; }
-  .badge.confirme { background: #d1ecf1; color: #0c5460; }
-  .badge.termine { background: #d4edda; color: #155724; }
+  .badge.reserve { background: #f0e6c8; color: #6b5a1e; }
+  .badge.confirme { background: #d7deca; color: #293a34; }
+  .badge.termine { background: #c8d9c8; color: #2c4a2c; }
 
   .actions { display: flex; gap: 5px; flex-wrap: wrap; }
 
-  .message { padding: 10px; border-radius: 8px; margin-bottom: 12px; font-size: 13px; }
-  .message.success { background: #d4edda; color: #155724; }
-  .message.error { background: #f8d7da; color: #721c24; }
-  .message.info { background: #d1ecf1; color: #0c5460; }
+  .message { padding: 12px; border-radius: 4px; margin-bottom: 12px; font-size: 13px; }
+  .message.success { background: #d7deca; color: #293a34; }
+  .message.error { background: #f5d7d7; color: #842029; }
+  .message.info { background: #e8ebe4; color: #293a34; }
 
   .loading {
     text-align: center;
     padding: 20px;
-    color: #86868b;
+    color: #5a6b62;
     font-size: 13px;
   }
   .spinner {
     display: inline-block;
     width: 16px;
     height: 16px;
-    border: 2px solid #d2d2d7;
-    border-top-color: #0071e3;
+    border: 2px solid #d7deca;
+    border-top-color: #293a34;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
     vertical-align: middle;
@@ -132,13 +186,22 @@
   }
   @keyframes spin { to { transform: rotate(360deg); } }
 
-  .empty { text-align: center; padding: 20px; color: #86868b; font-size: 13px; }
+  .empty { text-align: center; padding: 20px; color: #5a6b62; font-size: 13px; }
   .filtre { max-width: 260px; margin-bottom: 12px; }
+
+  @media (max-width: 600px) {
+    .header img { height: 35px; }
+    .header h1 { font-size: 18px; }
+    th, td { padding: 8px 6px; font-size: 12px; }
+  }
 </style>
 </head>
 <body>
 
-<h1>🔆 Gestion Panneaux LED</h1>
+<div class="header">
+  <img src="logo.png" alt="DuoDisplay" onerror="this.style.display='none'">
+  <h1>Gestion Panneaux LED</h1>
+</div>
 
 <div id="message"></div>
 
@@ -158,7 +221,7 @@
 </div>
 
 <div class="card">
-  <h2>📦 Stock disponible <span id="periodeLabel" style="font-size:12px;color:#86868b;font-weight:400;"></span></h2>
+  <h2>📦 Stock disponible <span id="periodeLabel" style="font-size:12px;color:#5a6b62;font-weight:400;"></span></h2>
   <div id="stockGrid" class="stock-grid">
     <div class="loading"><span class="spinner"></span>Chargement...</div>
   </div>
@@ -168,8 +231,8 @@
   <h2>➕ Nouvelle réservation</h2>
   <div class="form-row">
     <div class="form-group">
-      <label>Chef de projet</label>
-      <input type="text" id="chef" placeholder="Votre nom">
+      <label>Client</label>
+      <input type="text" id="chef" placeholder="Nom du client">
     </div>
     <div class="form-group">
       <label>Matériel</label>
@@ -198,7 +261,7 @@
   <h2>📋 Réservations
     <button class="small" onclick="chargerReservations()" style="margin-left:8px;">🔄 Rafraîchir</button>
   </h2>
-  <input type="text" class="filtre" id="filtreChef" placeholder="Filtrer par chef de projet..." oninput="filtrerReservations()">
+  <input type="text" class="filtre" id="filtreChef" placeholder="Filtrer par client..." oninput="filtrerReservations()">
   <div id="tableReservations" class="loading"><span class="spinner"></span>Chargement...</div>
 </div>
 
@@ -207,7 +270,6 @@ const API_URL = "https://script.google.com/macros/s/AKfycbwV3pXjA5q7GCenjhXRfpdG
 
 let reservationsCache = [];
 
-// ============ UTILITAIRES ============
 function formatDate(date) {
   return date.getFullYear() + "-" +
          String(date.getMonth() + 1).padStart(2, '0') + "-" +
@@ -224,31 +286,20 @@ function afficherMessage(texte, type) {
   setTimeout(function() { el.innerHTML = ''; }, 4000);
 }
 
-// ============ FETCH ROBUSTE AVEC RETRY ============
 function fetchJSON(url, tentatives) {
   tentatives = tentatives || 3;
 
   return fetch(url, { redirect: 'follow' })
     .then(function(r) { return r.text(); })
     .then(function(text) {
-      // Détecter si c'est du HTML (page d'erreur ou de connexion)
-      if (text.trim().startsWith("<")) {
-        throw new Error("HTML_RESPONSE");
-      }
-      try {
-        return JSON.parse(text);
-      } catch (e) {
-        throw new Error("PARSE_ERROR");
-      }
+      if (text.trim().startsWith("<")) throw new Error("HTML_RESPONSE");
+      try { return JSON.parse(text); }
+      catch (e) { throw new Error("PARSE_ERROR"); }
     })
     .catch(function(err) {
       if (tentatives > 1 && (err.message === "HTML_RESPONSE" || err.message === "PARSE_ERROR")) {
-        // Attendre 1 seconde puis réessayer
-        return new Promise(function(resolve) {
-          setTimeout(resolve, 1000);
-        }).then(function() {
-          return fetchJSON(url, tentatives - 1);
-        });
+        return new Promise(function(resolve) { setTimeout(resolve, 1000); })
+          .then(function() { return fetchJSON(url, tentatives - 1); });
       }
       throw err;
     });
@@ -275,7 +326,6 @@ function appelAPI(action, methode, data) {
   }
 }
 
-// ============ STOCK ============
 function chargerStock() {
   const debut = document.getElementById('dateVerifDebut').value || aujourdhui();
   const fin = document.getElementById('dateVerifFin').value || aujourdhui();
@@ -309,7 +359,6 @@ function chargerStock() {
     });
 }
 
-// ============ RÉSERVATION ============
 function creerReservation() {
   const data = {
     action: 'creerReservation',
@@ -356,7 +405,6 @@ function creerReservation() {
     });
 }
 
-// ============ RÉSERVATIONS ============
 function chargerReservations() {
   const el = document.getElementById('tableReservations');
   el.innerHTML = '<div class="loading"><span class="spinner"></span>Chargement...</div>';
@@ -384,7 +432,7 @@ function afficherReservations() {
   const filtre = document.getElementById('filtreChef').value.toLowerCase();
 
   let html = '<table><thead><tr>';
-  html += '<th>Chef</th><th>Matériel</th><th>Qté</th><th>Début</th><th>Fin</th><th>Statut</th><th>Actions</th>';
+  html += '<th>Client</th><th>Matériel</th><th>Qté</th><th>Début</th><th>Fin</th><th>Statut</th><th>Actions</th>';
   html += '</tr></thead><tbody>';
 
   let count = 0;
@@ -442,13 +490,11 @@ function changerStatut(id, statut) {
     });
 }
 
-// ============ INIT ============
 document.addEventListener('DOMContentLoaded', function() {
   const auj = aujourdhui();
   document.getElementById('dateVerifDebut').value = auj;
   document.getElementById('dateVerifFin').value = auj;
 
-  // Petit délai pour éviter que les 2 appels partent exactement en même temps
   chargerStock();
   setTimeout(chargerReservations, 800);
 });
