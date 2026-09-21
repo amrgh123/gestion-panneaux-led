@@ -16,7 +16,6 @@
     margin: 0 auto;
     font-size: 14px;
   }
-
   .header {
     display: flex;
     align-items: center;
@@ -26,19 +25,9 @@
     background: #293a34;
     border-radius: 6px;
   }
-  .header img {
-    height: 45px;
-    width: auto;
-  }
-  .header h1 {
-    font-size: 22px;
-    font-weight: 700;
-    color: #d7deca;
-    letter-spacing: -0.5px;
-  }
-
+  .header img { height: 45px; width: auto; }
+  .header h1 { font-size: 22px; font-weight: 700; color: #d7deca; letter-spacing: -0.5px; }
   h2 { font-size: 16px; margin-bottom: 12px; color: #293a34; }
-
   .card {
     background: white;
     border-radius: 6px;
@@ -47,16 +36,9 @@
     border: 1px solid #e2e5dc;
     box-shadow: 0 1px 3px rgba(41,58,52,0.06);
   }
-
-  .date-bar {
-    display: flex;
-    gap: 10px;
-    align-items: flex-end;
-    flex-wrap: wrap;
-  }
+  .date-bar { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
   .date-bar .form-group { flex: 1; min-width: 140px; margin: 0; }
   .date-bar button { width: auto; padding: 9px 22px; }
-
   .stock-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -69,20 +51,10 @@
     padding: 18px;
     border-left: 4px solid #d7deca;
   }
-  .stock-card.bumper {
-    background: #293a34;
-    border-left-color: #8ba888;
-  }
-  .stock-card .label {
-    font-size: 11px;
-    opacity: 0.85;
-    margin-bottom: 8px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-  .stock-card .value { font-size: 38px; font-weight: 700; line-height: 1; color: #d7deca; }
+  .stock-card.bumper { border-left-color: #8ba888; }
+  .stock-card .label { font-size: 11px; opacity: 0.85; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+  .stock-card .value { font-size: 38px; font-weight: 700; line-height: 1; }
   .stock-card .sub { font-size: 11px; opacity: 0.7; margin-top: 8px; }
-
   .form-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -110,11 +82,7 @@
     color: #293a34;
     transition: border-color 0.15s, box-shadow 0.15s;
   }
-  input:focus, select:focus {
-    outline: none;
-    border-color: #293a34;
-    box-shadow: 0 0 0 3px rgba(41,58,52,0.1);
-  }
+  input:focus, select:focus { outline: none; border-color: #293a34; box-shadow: 0 0 0 3px rgba(41,58,52,0.1); }
   button {
     background: #293a34;
     color: #d7deca;
@@ -133,7 +101,6 @@
   button.success { background: #4a7a4a; color: #e8f0e0; }
   button.success:hover { background: #3d663d; }
   button.small { width: auto; padding: 6px 12px; font-size: 11px; }
-
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
   th, td { padding: 10px 9px; text-align: left; border-bottom: 1px solid #e8ebe4; }
   th {
@@ -145,20 +112,9 @@
     background: #f4f5f1;
     border-bottom: 2px solid #293a34;
   }
-
-  /* ===== LIGNE EN ALERTE (stock insuffisant) ===== */
-  tr.alerte {
-    background: #fce8e8;
-    border-left: 4px solid #c0392b;
-  }
-  tr.alerte td {
-    color: #7a1f1f;
-  }
-  tr.alerte .badge {
-    background: #c0392b !important;
-    color: white !important;
-  }
-
+  tr.alerte { background: #fce8e8; border-left: 4px solid #c0392b; }
+  tr.alerte td { color: #7a1f1f; }
+  tr.alerte .badge { background: #c0392b !important; color: white !important; }
   .badge {
     display: inline-block;
     padding: 4px 10px;
@@ -171,28 +127,12 @@
   .badge.reserve { background: #f0e6c8; color: #6b5a1e; }
   .badge.confirme { background: #d7deca; color: #293a34; }
   .badge.termine { background: #c8d9c8; color: #2c4a2c; }
-
-  /* Bandeau d'avertissement dans la cellule quantité */
-  .warning-icon {
-    display: inline-block;
-    margin-left: 6px;
-    font-size: 14px;
-    cursor: help;
-  }
-
+  .warning-icon { display: inline-block; margin-left: 6px; font-size: 14px; cursor: help; }
   .actions { display: flex; gap: 5px; flex-wrap: wrap; }
-
   .message { padding: 12px; border-radius: 4px; margin-bottom: 12px; font-size: 13px; }
   .message.success { background: #d7deca; color: #293a34; }
   .message.error { background: #f5d7d7; color: #842029; }
-  .message.info { background: #e8ebe4; color: #293a34; }
-
-  .loading {
-    text-align: center;
-    padding: 20px;
-    color: #5a6b62;
-    font-size: 13px;
-  }
+  .loading { text-align: center; padding: 20px; color: #5a6b62; font-size: 13px; }
   .spinner {
     display: inline-block;
     width: 16px;
@@ -205,15 +145,9 @@
     margin-right: 8px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-
   .empty { text-align: center; padding: 20px; color: #5a6b62; font-size: 13px; }
   .filtre { max-width: 260px; margin-bottom: 12px; }
-
-  .legende {
-    font-size: 11px;
-    color: #5a6b62;
-    margin-bottom: 10px;
-  }
+  .legende { font-size: 11px; color: #5a6b62; margin-bottom: 10px; }
   .legende span {
     display: inline-block;
     width: 12px;
@@ -223,7 +157,6 @@
     margin-right: 5px;
     vertical-align: middle;
   }
-
   @media (max-width: 600px) {
     .header img { height: 35px; }
     .header h1 { font-size: 18px; }
@@ -296,7 +229,7 @@
   <h2>📋 Réservations <span style="font-size:12px;color:#5a6b62;font-weight:400;">(triées par date de début)</span>
     <button class="small" onclick="chargerReservations()" style="margin-left:8px;">🔄 Rafraîchir</button>
   </h2>
-  <div class="legende"><span></span> Ligne rouge = stock insuffisant sur la période (réservation en conflit)</div>
+  <div class="legende"><span></span> Ligne rouge = surréservation détectée sur au moins un jour de la période</div>
   <input type="text" class="filtre" id="filtreChef" placeholder="Filtrer par client..." oninput="filtrerReservations()">
   <div id="tableReservations" class="loading"><span class="spinner"></span>Chargement...</div>
 </div>
@@ -304,9 +237,13 @@
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbwV3pXjA5q7GCenjhXRfpdGF1RDTE9bGui-030CrbxWDHnLneMhDkJhR-knrVyWJdaCBg/exec";
 
+// ⚠️ STOCK EN MARCHE RÉEL
+const STOCK_REEL = {
+  "LED": 84,
+  "BUMPER": 8
+};
+
 let reservationsCache = [];
-let inventaireCache = [];
-let endommagesCache = [];
 
 function formatDate(date) {
   return date.getFullYear() + "-" +
@@ -314,9 +251,7 @@ function formatDate(date) {
          String(date.getDate()).padStart(2, '0');
 }
 
-function aujourdhui() {
-  return formatDate(new Date());
-}
+function aujourdhui() { return formatDate(new Date()); }
 
 function afficherMessage(texte, type) {
   const el = document.getElementById('message');
@@ -326,13 +261,11 @@ function afficherMessage(texte, type) {
 
 function fetchJSON(url, tentatives) {
   tentatives = tentatives || 3;
-
   return fetch(url, { redirect: 'follow' })
     .then(function(r) { return r.text(); })
     .then(function(text) {
       if (text.trim().startsWith("<")) throw new Error("HTML_RESPONSE");
-      try { return JSON.parse(text); }
-      catch (e) { throw new Error("PARSE_ERROR"); }
+      try { return JSON.parse(text); } catch (e) { throw new Error("PARSE_ERROR"); }
     })
     .catch(function(err) {
       if (tentatives > 1 && (err.message === "HTML_RESPONSE" || err.message === "PARSE_ERROR")) {
@@ -346,12 +279,10 @@ function fetchJSON(url, tentatives) {
 function appelAPI(action, methode, data) {
   let url = API_URL;
   let options = { redirect: 'follow' };
-
   if (methode === 'POST') {
     options.method = 'POST';
     options.headers = { 'Content-Type': 'text/plain;charset=utf-8' };
     options.body = JSON.stringify(data);
-
     return fetch(url, options)
       .then(function(r) { return r.text(); })
       .then(function(text) {
@@ -367,14 +298,11 @@ function appelAPI(action, methode, data) {
 function chargerStock() {
   const debut = document.getElementById('dateVerifDebut').value || aujourdhui();
   const fin = document.getElementById('dateVerifFin').value || aujourdhui();
-
   const el = document.getElementById('stockGrid');
   el.innerHTML = '<div class="loading"><span class="spinner"></span>Chargement...</div>';
-
   document.getElementById('periodeLabel').textContent = '(du ' + debut + ' au ' + fin + ')';
 
   const url = API_URL + '?action=disponibilite&debut=' + debut + '&fin=' + fin + '&t=' + Date.now();
-
   fetchJSON(url)
     .then(function(data) {
       let html = '';
@@ -406,12 +334,10 @@ function creerReservation() {
     debut: document.getElementById('debut').value,
     fin: document.getElementById('fin').value
   };
-
   if (!data.chef || !data.debut || !data.fin) {
     afficherMessage('Veuillez remplir tous les champs', 'error');
     return;
   }
-
   const btn = document.getElementById('btnResa');
   btn.disabled = true;
   btn.textContent = 'Envoi...';
@@ -446,59 +372,58 @@ function creerReservation() {
 function chargerReservations() {
   const el = document.getElementById('tableReservations');
   el.innerHTML = '<div class="loading"><span class="spinner"></span>Chargement...</div>';
-
-  // Charger en parallèle : réservations + inventaire + endommagés
-  Promise.all([
-    appelAPI('reservations', 'GET'),
-    appelAPI('inventaire', 'GET')
-  ]).then(function(resultats) {
-    reservationsCache = resultats[0];
-    inventaireCache = resultats[1];
-    afficherReservations();
-  }).catch(function(err) {
-    if (err.message === "HTML_RESPONSE") {
-      el.innerHTML = '<div class="message error">Serveur en cours de chargement. Cliquez sur "Rafraîchir".</div>';
-    } else {
-      el.innerHTML = '<div class="message error">Erreur : ' + err.message + '</div>';
-    }
-  });
+  appelAPI('reservations', 'GET')
+    .then(function(data) {
+      reservationsCache = data;
+      afficherReservations();
+    })
+    .catch(function(err) {
+      if (err.message === "HTML_RESPONSE") {
+        el.innerHTML = '<div class="message error">Serveur en cours de chargement. Cliquez sur "Rafraîchir".</div>';
+      } else {
+        el.innerHTML = '<div class="message error">Erreur : ' + err.message + '</div>';
+      }
+    });
 }
 
-function filtrerReservations() {
-  afficherReservations();
-}
+function filtrerReservations() { afficherReservations(); }
 
-// ====== VÉRIFIER SI UNE RÉSERVATION DÉPASSE LE STOCK ======
-function estEnAlerte(resa, toutesLesResas) {
-  // Trouver le stock total de ce matériel
-  const item = inventaireCache.find(function(i) { return i.id === resa.materiel; });
-  if (!item) return false;
+// ====== VÉRIFICATION JOUR PAR JOUR (seuil = STOCK_REEL) ======
+function getInfoAlerte(resa, toutesLesResas) {
+  const stockDispo = STOCK_REEL[resa.materiel];
+  if (stockDispo === undefined) return null;
 
-  const stockTotal = item.total;
-  const stockEndommage = 0; // À améliorer si besoin (récupérer les endommagés)
+  const debut = new Date(resa.debut + "T00:00:00");
+  const fin = new Date(resa.fin + "T00:00:00");
+  const joursEnConflit = [];
 
-  // Calculer le total réservé sur la période de cette réservation
-  // (uniquement les résas actives qui chevauchent et qui ont le même matériel)
-  let totalSurLaPeriode = 0;
-  toutesLesResas.forEach(function(r) {
-    if (r.statut !== 'Réservé' && r.statut !== 'Confirmé') return;
-    if (r.materiel !== resa.materiel) return;
-
-    // Chevauchement ?
-    if (r.debut <= resa.fin && r.fin >= resa.debut) {
-      totalSurLaPeriode += r.quantite;
+  let currentDate = new Date(debut);
+  while (currentDate <= fin) {
+    const dateStr = formatDate(currentDate);
+    let totalCeJour = 0;
+    toutesLesResas.forEach(function(r) {
+      if (r.statut !== 'Réservé' && r.statut !== 'Confirmé') return;
+      if (r.materiel !== resa.materiel) return;
+      if (r.debut <= dateStr && r.fin >= dateStr) {
+        totalCeJour += r.quantite;
+      }
+    });
+    if (totalCeJour > stockDispo) {
+      joursEnConflit.push(dateStr + " : " + totalCeJour + " demandés / " + stockDispo + " dispo");
     }
-  });
+    currentDate.setDate(currentDate.getDate() + 1);
+  }
 
-  // La réservation est en alerte si le cumul dépasse le stock en marche
-  return totalSurLaPeriode > (stockTotal - stockEndommage);
+  if (joursEnConflit.length === 0) return null;
+  return "⚠️ Surréservation sur " + joursEnConflit.length + " jour(s) :\n" +
+         joursEnConflit.slice(0, 5).join("\n") +
+         (joursEnConflit.length > 5 ? "\n... et " + (joursEnConflit.length - 5) + " autre(s)" : "");
 }
 
 function afficherReservations() {
   const el = document.getElementById('tableReservations');
   const filtre = document.getElementById('filtreChef').value.toLowerCase();
 
-  // ===== TRI PAR DATE DE DÉBUT CROISSANTE =====
   const resasTriees = reservationsCache.slice().sort(function(a, b) {
     if (a.debut < b.debut) return -1;
     if (a.debut > b.debut) return 1;
@@ -519,13 +444,14 @@ function afficherReservations() {
     if (r.statut === 'Confirmé') badgeClass = 'confirme';
     else if (r.statut === 'Terminé') badgeClass = 'termine';
 
-    // Vérifier si cette réservation est en alerte
-    const enAlerte = estEnAlerte(r, reservationsCache);
+    const infoAlerte = getInfoAlerte(r, reservationsCache);
+    const enAlerte = !!infoAlerte;
     const rowClass = enAlerte ? 'alerte' : '';
 
     let warningIcon = '';
     if (enAlerte) {
-      warningIcon = '<span class="warning-icon" title="Stock insuffisant sur cette période">⚠️</span>';
+      const titre = infoAlerte.replace(/"/g, '&quot;').replace(/\n/g, '&#10;');
+      warningIcon = '<span class="warning-icon" title="' + titre + '">⚠️</span>';
     }
 
     let actions = '';
@@ -557,7 +483,6 @@ function afficherReservations() {
 
 function changerStatut(id, statut) {
   if (!confirm('Passer au statut "' + statut + '" ?')) return;
-
   appelAPI('changerStatut', 'POST', {action: 'changerStatut', id: id, statut: statut})
     .then(function(res) {
       if (res.succes) {
@@ -577,7 +502,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const auj = aujourdhui();
   document.getElementById('dateVerifDebut').value = auj;
   document.getElementById('dateVerifFin').value = auj;
-
   chargerStock();
   setTimeout(chargerReservations, 800);
 });
