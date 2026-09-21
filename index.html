@@ -17,7 +17,6 @@
     font-size: 14px;
   }
 
-  /* ===== EN-TÊTE AVEC LOGO ===== */
   .header {
     display: flex;
     align-items: center;
@@ -147,6 +146,19 @@
     border-bottom: 2px solid #293a34;
   }
 
+  /* ===== LIGNE EN ALERTE (stock insuffisant) ===== */
+  tr.alerte {
+    background: #fce8e8;
+    border-left: 4px solid #c0392b;
+  }
+  tr.alerte td {
+    color: #7a1f1f;
+  }
+  tr.alerte .badge {
+    background: #c0392b !important;
+    color: white !important;
+  }
+
   .badge {
     display: inline-block;
     padding: 4px 10px;
@@ -159,6 +171,14 @@
   .badge.reserve { background: #f0e6c8; color: #6b5a1e; }
   .badge.confirme { background: #d7deca; color: #293a34; }
   .badge.termine { background: #c8d9c8; color: #2c4a2c; }
+
+  /* Bandeau d'avertissement dans la cellule quantité */
+  .warning-icon {
+    display: inline-block;
+    margin-left: 6px;
+    font-size: 14px;
+    cursor: help;
+  }
 
   .actions { display: flex; gap: 5px; flex-wrap: wrap; }
 
@@ -188,6 +208,21 @@
 
   .empty { text-align: center; padding: 20px; color: #5a6b62; font-size: 13px; }
   .filtre { max-width: 260px; margin-bottom: 12px; }
+
+  .legende {
+    font-size: 11px;
+    color: #5a6b62;
+    margin-bottom: 10px;
+  }
+  .legende span {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    background: #fce8e8;
+    border-left: 3px solid #c0392b;
+    margin-right: 5px;
+    vertical-align: middle;
+  }
 
   @media (max-width: 600px) {
     .header img { height: 35px; }
@@ -258,9 +293,10 @@
 </div>
 
 <div class="card">
-  <h2>📋 Réservations
+  <h2>📋 Réservations <span style="font-size:12px;color:#5a6b62;font-weight:400;">(triées par date de début)</span>
     <button class="small" onclick="chargerReservations()" style="margin-left:8px;">🔄 Rafraîchir</button>
   </h2>
+  <div class="legende"><span></span> Ligne rouge = stock insuffisant sur la période (réservation en conflit)</div>
   <input type="text" class="filtre" id="filtreChef" placeholder="Filtrer par client..." oninput="filtrerReservations()">
   <div id="tableReservations" class="loading"><span class="spinner"></span>Chargement...</div>
 </div>
@@ -269,6 +305,8 @@
 const API_URL = "https://script.google.com/macros/s/AKfycbwV3pXjA5q7GCenjhXRfpdGF1RDTE9bGui-030CrbxWDHnLneMhDkJhR-knrVyWJdaCBg/exec";
 
 let reservationsCache = [];
+let inventaireCache = [];
+let endommagesCache = [];
 
 function formatDate(date) {
   return date.getFullYear() + "-" +
@@ -409,34 +447,70 @@ function chargerReservations() {
   const el = document.getElementById('tableReservations');
   el.innerHTML = '<div class="loading"><span class="spinner"></span>Chargement...</div>';
 
-  appelAPI('reservations', 'GET')
-    .then(function(data) {
-      reservationsCache = data;
-      afficherReservations();
-    })
-    .catch(function(err) {
-      if (err.message === "HTML_RESPONSE") {
-        el.innerHTML = '<div class="message error">Serveur en cours de chargement. Cliquez sur "Rafraîchir".</div>';
-      } else {
-        el.innerHTML = '<div class="message error">Erreur : ' + err.message + '</div>';
-      }
-    });
+  // Charger en parallèle : réservations + inventaire + endommagés
+  Promise.all([
+    appelAPI('reservations', 'GET'),
+    appelAPI('inventaire', 'GET')
+  ]).then(function(resultats) {
+    reservationsCache = resultats[0];
+    inventaireCache = resultats[1];
+    afficherReservations();
+  }).catch(function(err) {
+    if (err.message === "HTML_RESPONSE") {
+      el.innerHTML = '<div class="message error">Serveur en cours de chargement. Cliquez sur "Rafraîchir".</div>';
+    } else {
+      el.innerHTML = '<div class="message error">Erreur : ' + err.message + '</div>';
+    }
+  });
 }
 
 function filtrerReservations() {
   afficherReservations();
 }
 
+// ====== VÉRIFIER SI UNE RÉSERVATION DÉPASSE LE STOCK ======
+function estEnAlerte(resa, toutesLesResas) {
+  // Trouver le stock total de ce matériel
+  const item = inventaireCache.find(function(i) { return i.id === resa.materiel; });
+  if (!item) return false;
+
+  const stockTotal = item.total;
+  const stockEndommage = 0; // À améliorer si besoin (récupérer les endommagés)
+
+  // Calculer le total réservé sur la période de cette réservation
+  // (uniquement les résas actives qui chevauchent et qui ont le même matériel)
+  let totalSurLaPeriode = 0;
+  toutesLesResas.forEach(function(r) {
+    if (r.statut !== 'Réservé' && r.statut !== 'Confirmé') return;
+    if (r.materiel !== resa.materiel) return;
+
+    // Chevauchement ?
+    if (r.debut <= resa.fin && r.fin >= resa.debut) {
+      totalSurLaPeriode += r.quantite;
+    }
+  });
+
+  // La réservation est en alerte si le cumul dépasse le stock en marche
+  return totalSurLaPeriode > (stockTotal - stockEndommage);
+}
+
 function afficherReservations() {
   const el = document.getElementById('tableReservations');
   const filtre = document.getElementById('filtreChef').value.toLowerCase();
+
+  // ===== TRI PAR DATE DE DÉBUT CROISSANTE =====
+  const resasTriees = reservationsCache.slice().sort(function(a, b) {
+    if (a.debut < b.debut) return -1;
+    if (a.debut > b.debut) return 1;
+    return 0;
+  });
 
   let html = '<table><thead><tr>';
   html += '<th>Client</th><th>Matériel</th><th>Qté</th><th>Début</th><th>Fin</th><th>Statut</th><th>Actions</th>';
   html += '</tr></thead><tbody>';
 
   let count = 0;
-  reservationsCache.forEach(function(r) {
+  resasTriees.forEach(function(r) {
     if (r.statut === 'Annulé') return;
     if (filtre && r.chef.toLowerCase().indexOf(filtre) === -1) return;
     count++;
@@ -444,6 +518,15 @@ function afficherReservations() {
     let badgeClass = 'reserve';
     if (r.statut === 'Confirmé') badgeClass = 'confirme';
     else if (r.statut === 'Terminé') badgeClass = 'termine';
+
+    // Vérifier si cette réservation est en alerte
+    const enAlerte = estEnAlerte(r, reservationsCache);
+    const rowClass = enAlerte ? 'alerte' : '';
+
+    let warningIcon = '';
+    if (enAlerte) {
+      warningIcon = '<span class="warning-icon" title="Stock insuffisant sur cette période">⚠️</span>';
+    }
 
     let actions = '';
     if (r.statut === 'Réservé') {
@@ -453,10 +536,10 @@ function afficherReservations() {
       actions += '<button class="small danger" onclick="changerStatut(\'' + r.id + '\', \'Annulé\')">Annuler</button>';
     }
 
-    html += '<tr>';
+    html += '<tr class="' + rowClass + '">';
     html += '<td>' + r.chef + '</td>';
     html += '<td>' + r.materiel + '</td>';
-    html += '<td>' + r.quantite + '</td>';
+    html += '<td>' + r.quantite + warningIcon + '</td>';
     html += '<td>' + r.debut + '</td>';
     html += '<td>' + r.fin + '</td>';
     html += '<td><span class="badge ' + badgeClass + '">' + r.statut + '</span></td>';
