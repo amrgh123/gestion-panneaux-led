@@ -1,3 +1,76 @@
+<body>
+
+<div class="header">
+  <img src="logo.png" alt="DuoDisplay" onerror="this.style.display='none'">
+  <h1>Gestion Panneaux LED</h1>
+</div>
+
+<div id="message"></div>
+
+<div class="card">
+  <h2>📦 Stock
+    <span style="font-size:11px;color:#5a6b62;font-weight:400;margin-left:8px;">
+      <input type="date" id="dateVerifDebut" style="width:130px;display:inline-block;padding:4px 6px;font-size:11px;">
+      →
+      <input type="date" id="dateVerifFin" style="width:130px;display:inline-block;padding:4px 6px;font-size:11px;">
+      <button class="small" onclick="chargerStock()" style="margin-left:6px;">Vérifier</button>
+    </span>
+  </h2>
+  <div id="stockGrid" class="stock-grid">
+    <div class="loading"><span class="spinner"></span>Chargement...</div>
+  </div>
+</div>
+
+<div class="card">
+  <h2>➕ Nouvelle réservation</h2>
+
+  <div class="mode-switch">
+    <div class="mode-btn active" id="mode-btn-kit" onclick="setMode('kit')">🎬 Kit écrans LED</div>
+    <div class="mode-btn" id="mode-btn-libre" onclick="setMode('libre')">📦 Articles seuls</div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label>Client</label>
+      <input type="text" id="client" placeholder="Nom du client">
+    </div>
+    <div class="form-group" id="bloc-nbEcrans">
+      <label>Nombre d'écrans LED</label>
+      <input type="number" id="nbEcrans" min="0" value="1" oninput="calculerApercu()">
+    </div>
+    <div class="form-group">
+      <label>Date de début</label>
+      <input type="date" id="debut">
+    </div>
+    <div class="form-group">
+      <label>Date de fin</label>
+      <input type="date" id="fin">
+    </div>
+  </div>
+
+  <h3>➕ Articles supplémentaires</h3>
+  <div class="extras-list" id="extrasList"></div>
+  <button class="add-extra" onclick="ajouterExtra()">+ Ajouter un article</button>
+
+  <h3>🔍 Aperçu</h3>
+  <div class="kit-preview" id="kitPreview">
+    <em>Saisissez un nombre d'écrans ou ajoutez des articles.</em>
+  </div>
+
+  <div style="margin-top:12px;">
+    <button id="btnResa" onclick="validerReservation()">Réserver</button>
+  </div>
+</div>
+
+<div class="card">
+  <h2>📋 Réservations
+    <button class="small" onclick="chargerReservations()" style="margin-left:8px;">🔄 Rafraîchir</button>
+  </h2>
+  <div class="legende">Cliquez sur une ligne pour afficher le détail des articles</div>
+  <input type="text" class="filtre" id="filtreClient" placeholder="Filtrer par client..." oninput="afficherReservations()">
+  <div id="tableReservations" class="loading"><span class="spinner"></span>Chargement...</div>
+</div>
+
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbwV3pXjA5q7GCenjhXRfpdGF1RDTE9bGui-030CrbxWDHnLneMhDkJhR-knrVyWJdaCBg/exec";
 
@@ -71,12 +144,8 @@ function appelAPI(action, methode, data) {
       .then(function(r) { return r.text(); })
       .then(function(text) {
         if (text.trim().startsWith("<")) throw new Error("HTML_RESPONSE");
-        try {
-          return JSON.parse(text);
-        } catch (e) {
-          console.error("Réponse non-JSON :", text);
-          throw new Error("Réponse invalide du serveur");
-        }
+        try { return JSON.parse(text); }
+        catch (e) { console.error("Réponse non-JSON :", text); throw new Error("Réponse invalide du serveur"); }
       });
   } else {
     url += '?action=' + action;
@@ -84,7 +153,6 @@ function appelAPI(action, methode, data) {
   }
 }
 
-// ====== STOCK ======
 function chargerStock() {
   const debut = document.getElementById('dateVerifDebut').value || aujourdhui();
   const fin = document.getElementById('dateVerifFin').value || aujourdhui();
@@ -96,13 +164,10 @@ function chargerStock() {
     .then(function(data) {
       const dispoParId = {};
       data.forEach(function(item) { dispoParId[item.id] = item; });
-
       let html = '';
-
       const chassis = dispoParId[ID_CHASSIS] ? dispoParId[ID_CHASSIS].disponible : 0;
       const tuiles = dispoParId[ID_TUILE] ? dispoParId[ID_TUILE].disponible : 0;
       const panneauxComplets = Math.min(chassis, Math.floor(tuiles / 3));
-
       html += '<div class="stock-row featured" onclick="toggleDetails(\'d-led\')">';
       html += '<div class="stock-name">Panneaux LED complets<div class="stock-sub">châssis + 3 tuiles • cliquer pour détails</div></div>';
       html += '<div class="stock-qte">' + panneauxComplets + '</div>';
@@ -112,9 +177,7 @@ function chargerStock() {
       html += '<tr><td>Châssis (MPI-PLD001-1)</td><td>' + chassis + '</td></tr>';
       html += '<tr><td>Tuiles (MPI-PLD002-1)</td><td>' + tuiles + '</td></tr>';
       html += '</table></div>';
-
-      let novaDispo = 0, novaTotal = 0;
-      let novaDetails = '';
+      let novaDispo = 0, novaTotal = 0, novaDetails = '';
       NOVASTAR_IDS.forEach(function(id) {
         if (dispoParId[id]) {
           novaDispo += dispoParId[id].disponible;
@@ -131,7 +194,6 @@ function chargerStock() {
         html += '<div class="stock-details" id="d-nova">';
         html += '<table><tr><th>Modèle</th><th>Dispo</th></tr>' + novaDetails + '</table></div>';
       }
-
       data.forEach(function(item) {
         if (NOVASTAR_IDS.indexOf(item.id) >= 0) return;
         const cls = item.disponible < 5 ? 'stock-row alerte' : 'stock-row';
@@ -140,7 +202,6 @@ function chargerStock() {
         html += '<div class="stock-qte">' + item.disponible + '</div>';
         html += '</div>';
       });
-
       el.innerHTML = html;
     })
     .catch(function(err) {
@@ -153,39 +214,28 @@ function toggleDetails(id) {
   if (el) el.classList.toggle('open');
 }
 
-// ====== INVENTAIRE EXTRAS ======
 function chargerInventairePourExtras() {
   if (inventaireCache.length > 0) return;
   appelAPI('inventaire', 'GET').then(function(data) {
     inventaireCache = data;
-    inventaireCache.unshift({
-      id: KIT_LED_ID,
-      type: "🎬 Panneaux LED complets (châssis + 3 tuiles)",
-      total: 0
-    });
-  }).catch(function(err) {
-    console.error("Erreur chargement inventaire :", err);
-  });
+    inventaireCache.unshift({ id: KIT_LED_ID, type: "🎬 Panneaux LED complets (châssis + 3 tuiles)", total: 0 });
+  }).catch(function(err) { console.error("Erreur inventaire :", err); });
 }
 
 function ajouterExtra() {
   const list = document.getElementById('extrasList');
   const div = document.createElement('div');
   div.className = 'extra-item';
-
   let options = '<option value="">-- Choisir un article --</option>';
   inventaireCache.forEach(function(item) {
     options += '<option value="' + item.id + '">' + item.type + '</option>';
   });
-
   div.innerHTML =
     '<select class="extra-select">' + options + '</select>' +
     '<input type="number" class="extra-qte" min="1" value="1" placeholder="Qté">' +
     '<button class="remove-extra" onclick="this.parentElement.remove();calculerApercu();">✕</button>';
-
   div.querySelector('.extra-select').addEventListener('change', calculerApercu);
   div.querySelector('.extra-qte').addEventListener('input', calculerApercu);
-
   list.appendChild(div);
   calculerApercu();
 }
@@ -200,7 +250,6 @@ function getExtras() {
   return extras;
 }
 
-// ====== APERÇU ======
 function calculerKitLocal(nbEcrans) {
   const kit = {};
   for (const id in KIT_STANDARD) {
@@ -234,19 +283,16 @@ function calculerApercu() {
   const el = document.getElementById('kitPreview');
   const nbEcrans = (modeActuel === 'kit') ? (parseInt(document.getElementById('nbEcrans').value) || 0) : 0;
   const extras = getExtras();
-
   let kit = {};
   if (modeActuel === 'kit' && nbEcrans >= 1) {
     kit = calculerKitLocal(nbEcrans);
     kit["MPI-NOVASTAR/TB60"] = 1;
   }
   kit = fusionnerExtrasLocal(kit, extras);
-
   if (Object.keys(kit).length === 0) {
     el.innerHTML = '<em>Saisissez un nombre d\'écrans ou ajoutez des articles.</em>';
     return;
   }
-
   let html = '<table><thead><tr><th>Article</th><th>Quantité</th></tr></thead><tbody>';
   for (const id in kit) {
     let label = id;
@@ -261,48 +307,36 @@ function calculerApercu() {
   el.innerHTML = html;
 }
 
-// ====== VALIDER ======
 function validerReservation() {
   const client = document.getElementById('client').value.trim();
   const debut = document.getElementById('debut').value;
   const fin = document.getElementById('fin').value;
-
   if (!client || !debut || !fin) {
     afficherMessage('Veuillez remplir le client et les dates', 'error');
     return;
   }
-
   const extras = getExtras();
   const btn = document.getElementById('btnResa');
   btn.disabled = true;
   btn.textContent = 'Envoi...';
-
-  let payload;
-  let action;
-
+  let payload, action;
   if (modeActuel === 'kit') {
     const nbEcrans = parseInt(document.getElementById('nbEcrans').value) || 0;
     if (nbEcrans < 1 && extras.length === 0) {
       afficherMessage('Saisissez au moins 1 écran ou un article', 'error');
-      btn.disabled = false;
-      btn.textContent = 'Réserver';
-      return;
+      btn.disabled = false; btn.textContent = 'Réserver'; return;
     }
     action = 'creerReservationKit';
     payload = { action: action, client: client, nbEcrans: nbEcrans, debut: debut, fin: fin, extras: extras };
   } else {
     if (extras.length === 0) {
       afficherMessage('Ajoutez au moins un article', 'error');
-      btn.disabled = false;
-      btn.textContent = 'Réserver';
-      return;
+      btn.disabled = false; btn.textContent = 'Réserver'; return;
     }
     action = 'creerReservationLibre';
     payload = { action: action, client: client, articles: extras, debut: debut, fin: fin };
   }
-
   console.log("Envoi :", payload);
-
   appelAPI(action, 'POST', payload)
     .then(function(res) {
       console.log("Réponse :", res);
@@ -317,8 +351,7 @@ function validerReservation() {
         chargerStock();
         chargerReservations();
       } else {
-        const msg = (res && res.message) ? res.message : "Réponse invalide du serveur";
-        afficherMessage('❌ ' + msg, 'error');
+        afficherMessage('❌ ' + (res && res.message ? res.message : "Réponse invalide"), 'error');
       }
     })
     .catch(function(err) {
@@ -331,24 +364,17 @@ function validerReservation() {
     });
 }
 
-// ====== RÉSERVATIONS ======
 function chargerReservations() {
   const el = document.getElementById('tableReservations');
   el.innerHTML = '<div class="loading"><span class="spinner"></span>Chargement...</div>';
   appelAPI('reservations', 'GET')
-    .then(function(data) {
-      reservationsCache = data;
-      afficherReservations();
-    })
-    .catch(function(err) {
-      el.innerHTML = '<div class="message error">Erreur : ' + err.message + '</div>';
-    });
+    .then(function(data) { reservationsCache = data; afficherReservations(); })
+    .catch(function(err) { el.innerHTML = '<div class="message error">Erreur : ' + err.message + '</div>'; });
 }
 
 function afficherReservations() {
   const el = document.getElementById('tableReservations');
   const filtre = document.getElementById('filtreClient').value.toLowerCase();
-
   const groupes = {};
   reservationsCache.forEach(function(r) {
     if (r.statut === 'Annulé') return;
@@ -357,35 +383,27 @@ function afficherReservations() {
     if (!groupes[g]) groupes[g] = [];
     groupes[g].push(r);
   });
-
   const groupesTries = Object.keys(groupes).sort(function(a, b) {
     return groupes[a][0].debut.localeCompare(groupes[b][0].debut);
   });
-
   let html = '<table><thead><tr>';
   html += '<th style="width:50%;">Client / Articles</th><th>Qté</th><th>Début</th><th>Fin</th><th>Statut</th><th>Actions</th>';
   html += '</tr></thead><tbody>';
-
   let count = 0;
   groupesTries.forEach(function(g) {
     const lignes = groupes[g];
     const premiere = lignes[0];
     count++;
-
     let badgeClass = 'reserve';
     if (premiere.statut === 'Confirmé') badgeClass = 'confirme';
     else if (premiere.statut === 'Terminé') badgeClass = 'termine';
-
     const totalArticles = lignes.reduce(function(sum, l) { return sum + l.quantite; }, 0);
-
     html += '<tr class="groupe-ligne" id="row-' + g + '" onclick="toggleGroupe(\'' + g + '\')">';
     html += '<td><span class="expand-icon" id="icon-' + g + '">▶</span>';
     html += '<strong>' + premiere.client + '</strong>';
     html += ' <span style="color:#5a6b62;font-size:11px;font-weight:normal;">(' + lignes.length + ' article' + (lignes.length > 1 ? 's' : '') + ')</span>';
-    html += '</td>';
-    html += '<td>' + totalArticles + '</td>';
-    html += '<td>' + premiere.debut + '</td>';
-    html += '<td>' + premiere.fin + '</td>';
+    html += '</td><td>' + totalArticles + '</td>';
+    html += '<td>' + premiere.debut + '</td><td>' + premiere.fin + '</td>';
     html += '<td><span class="badge ' + badgeClass + '">' + premiere.statut + '</span></td>';
     html += '<td class="actions">';
     if (premiere.statut === 'Réservé') {
@@ -395,21 +413,16 @@ function afficherReservations() {
       html += '<button class="small danger" onclick="event.stopPropagation();changerStatutGroupe(\'' + g + '\', \'Annulé\')">Annuler</button>';
     }
     html += '</td></tr>';
-
-    html += '<tr class="details-ligne" id="det-' + g + '">';
-    html += '<td colspan="6">';
+    html += '<tr class="details-ligne" id="det-' + g + '"><td colspan="6">';
     html += '<table><thead><tr><th>Article</th><th>Quantité</th></tr></thead><tbody>';
     lignes.forEach(function(l) {
       html += '<tr><td>' + l.materiel + '</td><td>' + l.quantite + '</td></tr>';
     });
-    html += '</tbody></table>';
-    html += '</td></tr>';
+    html += '</tbody></table></td></tr>';
   });
-
   if (count === 0) {
     html += '<tr><td colspan="6" class="empty">Aucune réservation</td></tr>';
   }
-
   html += '</tbody></table>';
   el.innerHTML = html;
 }
@@ -437,7 +450,6 @@ function changerStatutGroupe(groupe, statut) {
     });
 }
 
-// ====== INIT ======
 document.addEventListener('DOMContentLoaded', function() {
   const auj = aujourdhui();
   document.getElementById('dateVerifDebut').value = auj;
@@ -447,3 +459,6 @@ document.addEventListener('DOMContentLoaded', function() {
   chargerInventairePourExtras();
 });
 </script>
+
+</body>
+</html>
