@@ -12,7 +12,7 @@
     background: #f4f5f1;
     color: #293a34;
     padding: 15px;
-    max-width: 1100px;
+    max-width: 1200px;
     margin: 0 auto;
     font-size: 14px;
   }
@@ -28,6 +28,7 @@
   .header img { height: 45px; width: auto; }
   .header h1 { font-size: 22px; font-weight: 700; color: #d7deca; letter-spacing: -0.5px; }
   h2 { font-size: 16px; margin-bottom: 12px; color: #293a34; }
+  h3 { font-size: 14px; margin: 15px 0 10px; color: #5a6b62; text-transform: uppercase; letter-spacing: 0.5px; }
   .card {
     background: white;
     border-radius: 6px;
@@ -41,20 +42,21 @@
   .date-bar button { width: auto; padding: 9px 22px; }
   .stock-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 12px;
   }
   .stock-card {
     background: #293a34;
     color: #d7deca;
     border-radius: 6px;
-    padding: 18px;
+    padding: 15px;
     border-left: 4px solid #d7deca;
   }
-  .stock-card.bumper { border-left-color: #8ba888; }
-  .stock-card .label { font-size: 11px; opacity: 0.85; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
-  .stock-card .value { font-size: 38px; font-weight: 700; line-height: 1; }
-  .stock-card .sub { font-size: 11px; opacity: 0.7; margin-top: 8px; }
+  .stock-card.alerte { border-left-color: #c0392b; }
+  .stock-card .label { font-size: 11px; opacity: 0.85; margin-bottom: 6px; }
+  .stock-card .value { font-size: 30px; font-weight: 700; line-height: 1; }
+  .stock-card .sub { font-size: 11px; opacity: 0.7; margin-top: 6px; }
+
   .form-row {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
@@ -80,7 +82,6 @@
     font-family: inherit;
     background: white;
     color: #293a34;
-    transition: border-color 0.15s, box-shadow 0.15s;
   }
   input:focus, select:focus { outline: none; border-color: #293a34; box-shadow: 0 0 0 3px rgba(41,58,52,0.1); }
   button {
@@ -92,17 +93,43 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
     font-size: 12px;
-    transition: background 0.15s;
   }
   button:hover { background: #3a4f47; }
   button:disabled { background: #a8b0a5; cursor: not-allowed; }
   button.danger { background: #a12c2c; color: #f5e5e5; }
-  button.danger:hover { background: #8a2424; }
   button.success { background: #4a7a4a; color: #e8f0e0; }
-  button.success:hover { background: #3d663d; }
   button.small { width: auto; padding: 6px 12px; font-size: 11px; }
+  button.add-extra { background: #d7deca; color: #293a34; padding: 6px 10px; font-size: 11px; }
+  button.remove-extra { background: #a12c2c; color: #f5e5e5; padding: 4px 8px; font-size: 11px; }
+
+  .kit-preview {
+    background: #f4f5f1;
+    border: 1px solid #d7deca;
+    border-radius: 4px;
+    padding: 12px;
+    margin-top: 10px;
+    font-size: 13px;
+  }
+  .kit-preview table { font-size: 12px; }
+  .kit-preview th, .kit-preview td { padding: 5px 8px; }
+  .kit-preview th {
+    background: none;
+    border-bottom: 1px solid #c8cfc0;
+    font-size: 10px;
+  }
+
+  .extras-list { margin-bottom: 10px; }
+  .extra-item {
+    display: grid;
+    grid-template-columns: 2fr 1fr auto;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+  .extra-item select, .extra-item input { margin: 0; padding: 6px 8px; font-size: 12px; }
+
   table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th, td { padding: 10px 9px; text-align: left; border-bottom: 1px solid #e8ebe4; }
+  th, td { padding: 8px; text-align: left; border-bottom: 1px solid #e8ebe4; }
   th {
     font-weight: 700;
     color: #293a34;
@@ -112,22 +139,26 @@
     background: #f4f5f1;
     border-bottom: 2px solid #293a34;
   }
-  tr.alerte { background: #fce8e8; border-left: 4px solid #c0392b; }
+  tr.groupe { border-left: 4px solid #8ba888; }
+  tr.groupe-header {
+    background: #d7deca;
+    font-weight: 600;
+  }
+  tr.groupe-header td { padding: 8px 10px; font-size: 12px; }
+  tr.alerte { background: #fce8e8; }
   tr.alerte td { color: #7a1f1f; }
   tr.alerte .badge { background: #c0392b !important; color: white !important; }
   .badge {
     display: inline-block;
-    padding: 4px 10px;
+    padding: 3px 8px;
     border-radius: 3px;
     font-size: 10px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
   }
   .badge.reserve { background: #f0e6c8; color: #6b5a1e; }
   .badge.confirme { background: #d7deca; color: #293a34; }
   .badge.termine { background: #c8d9c8; color: #2c4a2c; }
-  .warning-icon { display: inline-block; margin-left: 6px; font-size: 14px; cursor: help; }
   .actions { display: flex; gap: 5px; flex-wrap: wrap; }
   .message { padding: 12px; border-radius: 4px; margin-bottom: 12px; font-size: 13px; }
   .message.success { background: #d7deca; color: #293a34; }
@@ -135,8 +166,7 @@
   .loading { text-align: center; padding: 20px; color: #5a6b62; font-size: 13px; }
   .spinner {
     display: inline-block;
-    width: 16px;
-    height: 16px;
+    width: 16px; height: 16px;
     border: 2px solid #d7deca;
     border-top-color: #293a34;
     border-radius: 50%;
@@ -149,19 +179,21 @@
   .filtre { max-width: 260px; margin-bottom: 12px; }
   .legende { font-size: 11px; color: #5a6b62; margin-bottom: 10px; }
   .legende span {
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    background: #fce8e8;
-    border-left: 3px solid #c0392b;
-    margin-right: 5px;
-    vertical-align: middle;
+    display: inline-block; width: 12px; height: 12px;
+    background: #fce8e8; border-left: 3px solid #c0392b;
+    margin-right: 5px; vertical-align: middle;
   }
-  @media (max-width: 600px) {
-    .header img { height: 35px; }
-    .header h1 { font-size: 18px; }
-    th, td { padding: 8px 6px; font-size: 12px; }
+  .tabs { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+  .tab {
+    padding: 8px 16px;
+    background: white;
+    border: 1px solid #c8cfc0;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
   }
+  .tab.active { background: #293a34; color: #d7deca; border-color: #293a34; }
 </style>
 </head>
 <body>
@@ -173,77 +205,100 @@
 
 <div id="message"></div>
 
-<div class="card">
-  <h2>📅 Vérifier la disponibilité</h2>
-  <div class="date-bar">
-    <div class="form-group">
-      <label>Date de début</label>
-      <input type="date" id="dateVerifDebut">
+<div class="tabs">
+  <div class="tab active" onclick="afficherOnglet('stock')">📦 Stock</div>
+  <div class="tab" onclick="afficherOnglet('reservation')">➕ Nouvelle réservation</div>
+  <div class="tab" onclick="afficherOnglet('liste')">📋 Réservations</div>
+</div>
+
+<!-- STOCK -->
+<div id="onglet-stock">
+  <div class="card">
+    <h2>📅 Vérifier la disponibilité</h2>
+    <div class="date-bar">
+      <div class="form-group">
+        <label>Date de début</label>
+        <input type="date" id="dateVerifDebut">
+      </div>
+      <div class="form-group">
+        <label>Date de fin</label>
+        <input type="date" id="dateVerifFin">
+      </div>
+      <button onclick="chargerStock()">Vérifier</button>
     </div>
-    <div class="form-group">
-      <label>Date de fin</label>
-      <input type="date" id="dateVerifFin">
+  </div>
+  <div class="card">
+    <h2>📦 Stock disponible <span id="periodeLabel" style="font-size:12px;color:#5a6b62;font-weight:400;"></span></h2>
+    <div id="stockGrid" class="stock-grid">
+      <div class="loading"><span class="spinner"></span>Chargement...</div>
     </div>
-    <button id="btnVerif" onclick="chargerStock()">Vérifier</button>
   </div>
 </div>
 
-<div class="card">
-  <h2>📦 Stock disponible <span id="periodeLabel" style="font-size:12px;color:#5a6b62;font-weight:400;"></span></h2>
-  <div id="stockGrid" class="stock-grid">
-    <div class="loading"><span class="spinner"></span>Chargement...</div>
+<!-- RÉSERVATION -->
+<div id="onglet-reservation" style="display:none;">
+  <div class="card">
+    <h2>➕ Nouvelle réservation</h2>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Client</label>
+        <input type="text" id="client" placeholder="Nom du client">
+      </div>
+      <div class="form-group">
+        <label>Nombre d'écrans LED</label>
+        <input type="number" id="nbEcrans" min="1" value="1" oninput="calculerApercu()">
+      </div>
+      <div class="form-group">
+        <label>Date de début</label>
+        <input type="date" id="debut">
+      </div>
+      <div class="form-group">
+        <label>Date de fin</label>
+        <input type="date" id="fin">
+      </div>
+    </div>
+
+    <h3>➕ Ajouter des articles supplémentaires (facultatif)</h3>
+    <div class="extras-list" id="extrasList"></div>
+    <button class="add-extra" onclick="ajouterExtra()">+ Ajouter un article</button>
+
+    <h3>🔍 Aperçu du kit</h3>
+    <div class="kit-preview" id="kitPreview">
+      <em>Saisissez un nombre d'écrans pour voir le kit calculé automatiquement.</em>
+    </div>
+
+    <div style="margin-top:15px;">
+      <button id="btnResa" onclick="creerReservation()">Réserver le kit complet</button>
+    </div>
   </div>
 </div>
 
-<div class="card">
-  <h2>➕ Nouvelle réservation</h2>
-  <div class="form-row">
-    <div class="form-group">
-      <label>Client</label>
-      <input type="text" id="chef" placeholder="Nom du client">
-    </div>
-    <div class="form-group">
-      <label>Matériel</label>
-      <select id="materiel">
-        <option value="LED">Panneaux LED</option>
-        <option value="BUMPER">Support Bumper</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <label>Quantité</label>
-      <input type="number" id="quantite" min="1" value="1">
-    </div>
-    <div class="form-group">
-      <label>Date de début</label>
-      <input type="date" id="debut">
-    </div>
-    <div class="form-group">
-      <label>Date de fin</label>
-      <input type="date" id="fin">
-    </div>
+<!-- LISTE -->
+<div id="onglet-liste" style="display:none;">
+  <div class="card">
+    <h2>📋 Réservations <button class="small" onclick="chargerReservations()" style="margin-left:8px;">🔄 Rafraîchir</button></h2>
+    <div class="legende"><span></span> Ligne rouge = surréservation détectée sur au moins un jour</div>
+    <input type="text" class="filtre" id="filtreClient" placeholder="Filtrer par client..." oninput="afficherReservations()">
+    <div id="tableReservations" class="loading"><span class="spinner"></span>Chargement...</div>
   </div>
-  <button id="btnResa" onclick="creerReservation()">Réserver</button>
-</div>
-
-<div class="card">
-  <h2>📋 Réservations <span style="font-size:12px;color:#5a6b62;font-weight:400;">(triées par date de début)</span>
-    <button class="small" onclick="chargerReservations()" style="margin-left:8px;">🔄 Rafraîchir</button>
-  </h2>
-  <div class="legende"><span></span> Ligne rouge = surréservation détectée sur au moins un jour de la période</div>
-  <input type="text" class="filtre" id="filtreChef" placeholder="Filtrer par client..." oninput="filtrerReservations()">
-  <div id="tableReservations" class="loading"><span class="spinner"></span>Chargement...</div>
 </div>
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbwV3pXjA5q7GCenjhXRfpdGF1RDTE9bGui-030CrbxWDHnLneMhDkJhR-knrVyWJdaCBg/exec";
 
-// ⚠️ STOCK EN MARCHE RÉEL
-const STOCK_REEL = {
-  "LED": 84,
-  "BUMPER": 8
+// ⚠️ Ratios identiques à ceux du backend
+const KIT_STANDARD = {
+  "MPI-PLD001-1": { parEcran: 1 },
+  "MPI-PLD002-1": { parEcran: 3 },
+  "MPI-PLA003":   { fixe: 1 },
+  "MPI-PLA007":   { fixe: 1 },
+  "MPI-PLA005":   { moins1: true },
+  "MPI-PLA008":   { moins1: true },
+  "MPI-PLT001":   { arrondi: "ceil", parEcran: 0.1 }
 };
 
 let reservationsCache = [];
+let inventaireCache = [];
 
 function formatDate(date) {
   return date.getFullYear() + "-" +
@@ -256,7 +311,17 @@ function aujourdhui() { return formatDate(new Date()); }
 function afficherMessage(texte, type) {
   const el = document.getElementById('message');
   el.innerHTML = '<div class="message ' + type + '">' + texte + '</div>';
-  setTimeout(function() { el.innerHTML = ''; }, 4000);
+  setTimeout(function() { el.innerHTML = ''; }, 5000);
+}
+
+function afficherOnglet(nom) {
+  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+  event.target.classList.add('active');
+  document.getElementById('onglet-stock').style.display = (nom === 'stock') ? 'block' : 'none';
+  document.getElementById('onglet-reservation').style.display = (nom === 'reservation') ? 'block' : 'none';
+  document.getElementById('onglet-liste').style.display = (nom === 'liste') ? 'block' : 'none';
+  if (nom === 'liste') chargerReservations();
+  if (nom === 'reservation') chargerInventairePourExtras();
 }
 
 function fetchJSON(url, tentatives) {
@@ -295,6 +360,7 @@ function appelAPI(action, methode, data) {
   }
 }
 
+// ===== STOCK =====
 function chargerStock() {
   const debut = document.getElementById('dateVerifDebut').value || aujourdhui();
   const fin = document.getElementById('dateVerifFin').value || aujourdhui();
@@ -307,68 +373,139 @@ function chargerStock() {
     .then(function(data) {
       let html = '';
       data.forEach(function(item) {
-        const cls = item.id === 'BUMPER' ? 'stock-card bumper' : 'stock-card';
+        const cls = item.disponible < 5 ? 'stock-card alerte' : 'stock-card';
         html += '<div class="' + cls + '">';
         html += '<div class="label">' + item.type + '</div>';
         html += '<div class="value">' + item.disponible + '</div>';
-        html += '<div class="sub">sur ' + item.total + ' en marche</div>';
+        html += '<div class="sub">sur ' + item.total + ' en stock</div>';
         html += '</div>';
       });
       el.innerHTML = html;
     })
     .catch(function(err) {
-      if (err.message === "HTML_RESPONSE") {
-        el.innerHTML = '<div class="message error">Serveur en cours de chargement. Cliquez sur "Vérifier" pour réessayer.</div>';
-      } else {
-        el.innerHTML = '<div class="message error">Erreur : ' + err.message + '</div>';
-      }
+      el.innerHTML = '<div class="message error">Erreur : ' + err.message + '</div>';
     });
 }
 
+// ===== INVENTAIRE POUR EXTRAS =====
+function chargerInventairePourExtras() {
+  if (inventaireCache.length > 0) return; // déjà chargé
+  appelAPI('inventaire', 'GET').then(function(data) {
+    inventaireCache = data;
+  }).catch(function() {});
+}
+
+function ajouterExtra() {
+  const list = document.getElementById('extrasList');
+  const div = document.createElement('div');
+  div.className = 'extra-item';
+
+  let options = '<option value="">-- Choisir un article --</option>';
+  inventaireCache.forEach(function(item) {
+    options += '<option value="' + item.id + '">' + item.type + '</option>';
+  });
+
+  div.innerHTML =
+    '<select class="extra-select">' + options + '</select>' +
+    '<input type="number" class="extra-qte" min="1" value="1" placeholder="Qté">' +
+    '<button class="remove-extra" onclick="this.parentElement.remove()">✕</button>';
+
+  list.appendChild(div);
+}
+
+function getExtras() {
+  const extras = [];
+  document.querySelectorAll('.extra-item').forEach(function(div) {
+    const id = div.querySelector('.extra-select').value;
+    const qte = parseInt(div.querySelector('.extra-qte').value) || 0;
+    if (id && qte > 0) extras.push({ id: id, quantite: qte });
+  });
+  return extras;
+}
+
+// ===== APERÇU DU KIT =====
+function calculerKitLocal(nbEcrans, extras) {
+  const kit = {};
+  for (const id in KIT_STANDARD) {
+    const regle = KIT_STANDARD[id];
+    let qte = 0;
+    if (regle.fixe !== undefined) qte = regle.fixe;
+    else if (regle.moins1) qte = Math.max(0, nbEcrans - 1);
+    else if (regle.arrondi === "ceil") qte = Math.ceil(nbEcrans * regle.parEcran);
+    else qte = nbEcrans * regle.parEcran;
+    if (qte > 0) kit[id] = qte;
+  }
+  (extras || []).forEach(function(e) {
+    if (kit[e.id]) kit[e.id] += e.quantite;
+    else kit[e.id] = e.quantite;
+  });
+  return kit;
+}
+
+function calculerApercu() {
+  const nbEcrans = parseInt(document.getElementById('nbEcrans').value) || 0;
+  const el = document.getElementById('kitPreview');
+
+  if (nbEcrans < 1) {
+    el.innerHTML = '<em>Saisissez un nombre d\'écrans.</em>';
+    return;
+  }
+
+  const kit = calculerKitLocal(nbEcrans, getExtras());
+  let html = '<table><thead><tr><th>Article</th><th>Quantité</th></tr></thead><tbody>';
+  for (const id in kit) {
+    const item = inventaireCache.find(function(i) { return i.id === id; });
+    const label = item ? item.type : id;
+    html += '<tr><td>' + label + '</td><td>' + kit[id] + '</td></tr>';
+  }
+  html += '</tbody></table>';
+  el.innerHTML = html;
+}
+
+// ===== CRÉER LA RÉSERVATION =====
 function creerReservation() {
   const data = {
-    action: 'creerReservation',
-    chef: document.getElementById('chef').value,
-    materiel: document.getElementById('materiel').value,
-    quantite: parseInt(document.getElementById('quantite').value),
+    action: 'creerReservationKit',
+    client: document.getElementById('client').value,
+    nbEcrans: parseInt(document.getElementById('nbEcrans').value),
     debut: document.getElementById('debut').value,
-    fin: document.getElementById('fin').value
+    fin: document.getElementById('fin').value,
+    extras: getExtras()
   };
-  if (!data.chef || !data.debut || !data.fin) {
+
+  if (!data.client || !data.nbEcrans || !data.debut || !data.fin) {
     afficherMessage('Veuillez remplir tous les champs', 'error');
     return;
   }
+
   const btn = document.getElementById('btnResa');
   btn.disabled = true;
   btn.textContent = 'Envoi...';
 
-  appelAPI('creerReservation', 'POST', data)
+  appelAPI('creerReservationKit', 'POST', data)
     .then(function(res) {
       if (res.succes) {
-        afficherMessage('✅ Réservation créée', 'success');
-        document.getElementById('chef').value = '';
-        document.getElementById('quantite').value = 1;
+        afficherMessage('✅ ' + res.message, 'success');
+        document.getElementById('client').value = '';
+        document.getElementById('nbEcrans').value = 1;
         document.getElementById('debut').value = '';
         document.getElementById('fin').value = '';
-        chargerReservations();
-        chargerStock();
+        document.getElementById('extrasList').innerHTML = '';
+        document.getElementById('kitPreview').innerHTML = '<em>Aperçu vide.</em>';
       } else {
         afficherMessage('❌ ' + res.message, 'error');
       }
     })
     .catch(function(err) {
-      if (err.message === "HTML_RESPONSE") {
-        afficherMessage('Serveur surchargé. Réessayez dans quelques secondes.', 'error');
-      } else {
-        afficherMessage('Erreur : ' + err.message, 'error');
-      }
+      afficherMessage('Erreur : ' + err.message, 'error');
     })
     .finally(function() {
       btn.disabled = false;
-      btn.textContent = 'Réserver';
+      btn.textContent = 'Réserver le kit complet';
     });
 }
 
+// ===== LISTE DES RÉSERVATIONS =====
 function chargerReservations() {
   const el = document.getElementById('tableReservations');
   el.innerHTML = '<div class="loading"><span class="spinner"></span>Chargement...</div>';
@@ -378,99 +515,63 @@ function chargerReservations() {
       afficherReservations();
     })
     .catch(function(err) {
-      if (err.message === "HTML_RESPONSE") {
-        el.innerHTML = '<div class="message error">Serveur en cours de chargement. Cliquez sur "Rafraîchir".</div>';
-      } else {
-        el.innerHTML = '<div class="message error">Erreur : ' + err.message + '</div>';
-      }
+      el.innerHTML = '<div class="message error">Erreur : ' + err.message + '</div>';
     });
-}
-
-function filtrerReservations() { afficherReservations(); }
-
-// ====== VÉRIFICATION JOUR PAR JOUR (seuil = STOCK_REEL) ======
-function getInfoAlerte(resa, toutesLesResas) {
-  const stockDispo = STOCK_REEL[resa.materiel];
-  if (stockDispo === undefined) return null;
-
-  const debut = new Date(resa.debut + "T00:00:00");
-  const fin = new Date(resa.fin + "T00:00:00");
-  const joursEnConflit = [];
-
-  let currentDate = new Date(debut);
-  while (currentDate <= fin) {
-    const dateStr = formatDate(currentDate);
-    let totalCeJour = 0;
-    toutesLesResas.forEach(function(r) {
-      if (r.statut !== 'Réservé' && r.statut !== 'Confirmé') return;
-      if (r.materiel !== resa.materiel) return;
-      if (r.debut <= dateStr && r.fin >= dateStr) {
-        totalCeJour += r.quantite;
-      }
-    });
-    if (totalCeJour > stockDispo) {
-      joursEnConflit.push(dateStr + " : " + totalCeJour + " demandés / " + stockDispo + " dispo");
-    }
-    currentDate.setDate(currentDate.getDate() + 1);
-  }
-
-  if (joursEnConflit.length === 0) return null;
-  return "⚠️ Surréservation sur " + joursEnConflit.length + " jour(s) :\n" +
-         joursEnConflit.slice(0, 5).join("\n") +
-         (joursEnConflit.length > 5 ? "\n... et " + (joursEnConflit.length - 5) + " autre(s)" : "");
 }
 
 function afficherReservations() {
   const el = document.getElementById('tableReservations');
-  const filtre = document.getElementById('filtreChef').value.toLowerCase();
+  const filtre = document.getElementById('filtreClient').value.toLowerCase();
 
-  const resasTriees = reservationsCache.slice().sort(function(a, b) {
-    if (a.debut < b.debut) return -1;
-    if (a.debut > b.debut) return 1;
-    return 0;
+  // Grouper par groupe
+  const groupes = {};
+  reservationsCache.forEach(function(r) {
+    if (r.statut === 'Annulé') return;
+    if (filtre && r.client.toLowerCase().indexOf(filtre) === -1) return;
+    const g = r.groupe || 'sans-groupe-' + r.id;
+    if (!groupes[g]) groupes[g] = [];
+    groupes[g].push(r);
+  });
+
+  // Trier les groupes par date de début
+  const groupesTries = Object.keys(groupes).sort(function(a, b) {
+    return groupes[a][0].debut.localeCompare(groupes[b][0].debut);
   });
 
   let html = '<table><thead><tr>';
-  html += '<th>Client</th><th>Matériel</th><th>Qté</th><th>Début</th><th>Fin</th><th>Statut</th><th>Actions</th>';
+  html += '<th>Client</th><th>Article</th><th>Qté</th><th>Début</th><th>Fin</th><th>Statut</th><th>Actions</th>';
   html += '</tr></thead><tbody>';
 
   let count = 0;
-  resasTriees.forEach(function(r) {
-    if (r.statut === 'Annulé') return;
-    if (filtre && r.chef.toLowerCase().indexOf(filtre) === -1) return;
-    count++;
+  groupesTries.forEach(function(g) {
+    const lignes = groupes[g];
+    lignes.forEach(function(r, idx) {
+      count++;
+      let badgeClass = 'reserve';
+      if (r.statut === 'Confirmé') badgeClass = 'confirme';
+      else if (r.statut === 'Terminé') badgeClass = 'termine';
 
-    let badgeClass = 'reserve';
-    if (r.statut === 'Confirmé') badgeClass = 'confirme';
-    else if (r.statut === 'Terminé') badgeClass = 'termine';
+      let actions = '';
+      if (idx === 0) {
+        // Boutons groupés sur la première ligne
+        if (r.statut === 'Réservé') {
+          actions = '<button class="small success" onclick="changerStatutGroupe(\'' + g + '\', \'Confirmé\')">Confirmer</button>';
+          actions += '<button class="small danger" onclick="changerStatutGroupe(\'' + g + '\', \'Annulé\')">Annuler</button>';
+        } else if (r.statut === 'Confirmé') {
+          actions += '<button class="small danger" onclick="changerStatutGroupe(\'' + g + '\', \'Annulé\')">Annuler</button>';
+        }
+      }
 
-    const infoAlerte = getInfoAlerte(r, reservationsCache);
-    const enAlerte = !!infoAlerte;
-    const rowClass = enAlerte ? 'alerte' : '';
-
-    let warningIcon = '';
-    if (enAlerte) {
-      const titre = infoAlerte.replace(/"/g, '&quot;').replace(/\n/g, '&#10;');
-      warningIcon = '<span class="warning-icon" title="' + titre + '">⚠️</span>';
-    }
-
-    let actions = '';
-    if (r.statut === 'Réservé') {
-      actions = '<button class="small success" onclick="changerStatut(\'' + r.id + '\', \'Confirmé\')">Confirmer</button>';
-      actions += '<button class="small danger" onclick="changerStatut(\'' + r.id + '\', \'Annulé\')">Annuler</button>';
-    } else if (r.statut === 'Confirmé') {
-      actions += '<button class="small danger" onclick="changerStatut(\'' + r.id + '\', \'Annulé\')">Annuler</button>';
-    }
-
-    html += '<tr class="' + rowClass + '">';
-    html += '<td>' + r.chef + '</td>';
-    html += '<td>' + r.materiel + '</td>';
-    html += '<td>' + r.quantite + warningIcon + '</td>';
-    html += '<td>' + r.debut + '</td>';
-    html += '<td>' + r.fin + '</td>';
-    html += '<td><span class="badge ' + badgeClass + '">' + r.statut + '</span></td>';
-    html += '<td class="actions">' + actions + '</td>';
-    html += '</tr>';
+      html += '<tr>';
+      html += '<td>' + (idx === 0 ? '<strong>' + r.client + '</strong>' : '') + '</td>';
+      html += '<td>' + r.materiel + '</td>';
+      html += '<td>' + r.quantite + '</td>';
+      html += '<td>' + (idx === 0 ? r.debut : '') + '</td>';
+      html += '<td>' + (idx === 0 ? r.fin : '') + '</td>';
+      html += '<td><span class="badge ' + badgeClass + '">' + r.statut + '</span></td>';
+      html += '<td class="actions">' + actions + '</td>';
+      html += '</tr>';
+    });
   });
 
   if (count === 0) {
@@ -481,29 +582,26 @@ function afficherReservations() {
   el.innerHTML = html;
 }
 
-function changerStatut(id, statut) {
-  if (!confirm('Passer au statut "' + statut + '" ?')) return;
-  appelAPI('changerStatut', 'POST', {action: 'changerStatut', id: id, statut: statut})
+function changerStatutGroupe(groupe, statut) {
+  if (!confirm('Passer TOUTES les lignes de ce groupe au statut "' + statut + '" ?')) return;
+  appelAPI('changerStatutGroupe', 'POST', {action: 'changerStatutGroupe', groupe: groupe, statut: statut})
     .then(function(res) {
       if (res.succes) {
-        afficherMessage('✅ Statut mis à jour', 'success');
+        afficherMessage('✅ ' + res.message, 'success');
         chargerReservations();
-        chargerStock();
       } else {
         afficherMessage('❌ ' + res.message, 'error');
       }
-    })
-    .catch(function(err) {
-      afficherMessage('Erreur : ' + err.message, 'error');
     });
 }
 
+// ===== INIT =====
 document.addEventListener('DOMContentLoaded', function() {
   const auj = aujourdhui();
   document.getElementById('dateVerifDebut').value = auj;
   document.getElementById('dateVerifFin').value = auj;
   chargerStock();
-  setTimeout(chargerReservations, 800);
+  chargerInventairePourExtras();
 });
 </script>
 
