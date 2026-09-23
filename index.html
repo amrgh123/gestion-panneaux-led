@@ -473,14 +473,36 @@ function validerReservation() {
 function chargerReservations() {
   const el = document.getElementById('tableReservations');
   el.innerHTML = '<div class="loading"><span class="spinner"></span>Chargement...</div>';
-  appelAPI('reservations', 'GET')
-    .then(function(data) { reservationsCache = data; afficherReservations(); })
-    .catch(function(err) { el.innerHTML = '<div class="message error">Erreur : ' + err.message + '</div>'; });
+  
+  // S'assurer que l'inventaire est chargé avant d'afficher
+  if (inventaireCache.length === 0) {
+    appelAPI('inventaire', 'GET').then(function(data) {
+      inventaireCache = data;
+      inventaireCache.unshift({ id: KIT_LED_ID, type: "🎬 Panneaux LED complets (châssis + 3 tuiles)", total: 0 });
+      appelAPI('reservations', 'GET').then(function(data) { 
+        reservationsCache = data; 
+        afficherReservations(); 
+      });
+    }).catch(function(err) { 
+      el.innerHTML = '<div class="message error">Erreur : ' + err.message + '</div>'; 
+    });
+  } else {
+    appelAPI('reservations', 'GET')
+      .then(function(data) { reservationsCache = data; afficherReservations(); })
+      .catch(function(err) { el.innerHTML = '<div class="message error">Erreur : ' + err.message + '</div>'; });
+  }
 }
 
 function afficherReservations() {
   const el = document.getElementById('tableReservations');
   const filtre = document.getElementById('filtreClient').value.toLowerCase();
+
+  // Construire un dictionnaire ID → Type depuis l'inventaire
+  const typeParId = {};
+  inventaireCache.forEach(function(item) {
+    typeParId[item.id] = item.type;
+  });
+
   const groupes = {};
   reservationsCache.forEach(function(r) {
     if (r.statut === 'Annulé') return;
@@ -489,21 +511,27 @@ function afficherReservations() {
     if (!groupes[g]) groupes[g] = [];
     groupes[g].push(r);
   });
+
   const groupesTries = Object.keys(groupes).sort(function(a, b) {
     return groupes[a][0].debut.localeCompare(groupes[b][0].debut);
   });
+
   let html = '<table><thead><tr>';
   html += '<th style="width:50%;">Client / Articles</th><th>Qté</th><th>Début</th><th>Fin</th><th>Statut</th><th>Actions</th>';
   html += '</tr></thead><tbody>';
+
   let count = 0;
   groupesTries.forEach(function(g) {
     const lignes = groupes[g];
     const premiere = lignes[0];
     count++;
+
     let badgeClass = 'reserve';
     if (premiere.statut === 'Confirmé') badgeClass = 'confirme';
     else if (premiere.statut === 'Terminé') badgeClass = 'termine';
+
     const totalArticles = lignes.reduce(function(sum, l) { return sum + l.quantite; }, 0);
+
     html += '<tr class="groupe-ligne" id="row-' + g + '" onclick="toggleGroupe(\'' + g + '\')">';
     html += '<td><span class="expand-icon" id="icon-' + g + '">▶</span>';
     html += '<strong>' + premiere.client + '</strong>';
@@ -520,13 +548,17 @@ function afficherReservations() {
       html += '<button class="small success" onclick="event.stopPropagation();validerRetour(\'' + g + '\')">✅ Valider le retour</button>';
     }
     html += '</td></tr>';
+
+    // Détails : afficher la désignation au lieu de l'ID
     html += '<tr class="details-ligne" id="det-' + g + '"><td colspan="6">';
     html += '<table><thead><tr><th>Article</th><th>Quantité</th></tr></thead><tbody>';
     lignes.forEach(function(l) {
-      html += '<tr><td>' + l.materiel + '</td><td>' + l.quantite + '</td></tr>';
+      const designation = typeParId[l.materiel] || l.materiel;
+      html += '<tr><td>' + designation + '</td><td>' + l.quantite + '</td></tr>';
     });
     html += '</tbody></table></td></tr>';
   });
+
   if (count === 0) html += '<tr><td colspan="6" class="empty">Aucune réservation</td></tr>';
   html += '</tbody></table>';
   el.innerHTML = html;
