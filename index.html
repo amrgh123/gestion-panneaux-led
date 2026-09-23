@@ -1,348 +1,3 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gestion Panneaux LED — DuoDisplay</title>
-<link rel="icon" href="logo.png" type="image/png">
-<style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #f4f5f1;
-    color: #293a34;
-    padding: 12px;
-    max-width: 1300px;
-    margin: 0 auto;
-    font-size: 13px;
-  }
-  .header {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 15px;
-    padding: 12px 18px;
-    background: #293a34;
-    border-radius: 6px;
-  }
-  .header img { height: 38px; width: auto; }
-  .header h1 { font-size: 20px; font-weight: 700; color: #d7deca; letter-spacing: -0.5px; }
-
-  h2 { font-size: 15px; margin-bottom: 10px; color: #293a34; }
-  h3 { font-size: 12px; margin: 12px 0 8px; color: #5a6b62; text-transform: uppercase; letter-spacing: 0.5px; }
-
-  .card {
-    background: white;
-    border-radius: 6px;
-    padding: 14px 16px;
-    margin-bottom: 12px;
-    border: 1px solid #e2e5dc;
-    box-shadow: 0 1px 3px rgba(41,58,52,0.06);
-  }
-
-  .stock-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 6px;
-  }
-  .stock-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 7px 10px;
-    background: #f9faf7;
-    border-radius: 4px;
-    border-left: 3px solid #d7deca;
-    font-size: 12px;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-  .stock-row:hover { background: #eef0ea; }
-  .stock-row.featured {
-    background: #293a34;
-    color: #d7deca;
-    border-left-color: #8ba888;
-    font-weight: 600;
-  }
-  .stock-row.featured:hover { background: #3a4f47; }
-  .stock-row.featured .stock-qte { font-size: 18px; color: #d7deca; }
-  .stock-row.alerte { background: #fce8e8; border-left-color: #c0392b; }
-  .stock-row.alerte .stock-qte { color: #c0392b; font-weight: 700; }
-  .stock-name { flex: 1; margin-right: 10px; line-height: 1.3; }
-  .stock-qte { font-size: 15px; font-weight: 700; min-width: 40px; text-align: right; }
-  .stock-sub { font-size: 10px; opacity: 0.6; }
-
-  .stock-details {
-    display: none;
-    background: white;
-    border: 1px solid #d7deca;
-    border-radius: 4px;
-    padding: 8px 12px;
-    margin: 4px 0 8px;
-    font-size: 11px;
-    grid-column: 1 / -1;
-  }
-  .stock-details.open { display: block; }
-  .stock-details table { font-size: 11px; }
-  .stock-details th, .stock-details td { padding: 4px 6px; }
-  .stock-details th { background: #f4f5f1; border-bottom: 1px solid #c8cfc0; font-size: 10px; }
-
-  .form-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-    gap: 8px;
-    margin-bottom: 8px;
-  }
-  .form-group { margin-bottom: 6px; }
-  .form-group label {
-    display: block;
-    font-size: 10px;
-    color: #5a6b62;
-    margin-bottom: 4px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-weight: 600;
-  }
-  input, select, button {
-    width: 100%;
-    padding: 8px 10px;
-    border: 1px solid #c8cfc0;
-    border-radius: 4px;
-    font-size: 13px;
-    font-family: inherit;
-    background: white;
-    color: #293a34;
-  }
-  input:focus, select:focus { outline: none; border-color: #293a34; box-shadow: 0 0 0 2px rgba(41,58,52,0.1); }
-  button {
-    background: #293a34;
-    color: #d7deca;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-size: 11px;
-    padding: 9px 14px;
-  }
-  button:hover { background: #3a4f47; }
-  button:disabled { background: #a8b0a5; cursor: not-allowed; }
-  button.danger { background: #a12c2c; color: #f5e5e5; }
-  button.success { background: #4a7a4a; color: #e8f0e0; }
-  button.small { width: auto; padding: 4px 10px; font-size: 10px; }
-  button.add-extra { background: #d7deca; color: #293a34; padding: 5px 10px; font-size: 11px; width: auto; }
-  button.remove-extra { background: #a12c2c; color: #f5e5e5; padding: 3px 7px; font-size: 10px; width: auto; }
-
-  .mode-switch { display: flex; gap: 6px; margin-bottom: 12px; }
-  .mode-btn {
-    flex: 1;
-    padding: 8px 12px;
-    background: #f4f5f1;
-    color: #5a6b62;
-    border: 2px solid #d7deca;
-    border-radius: 4px;
-    cursor: pointer;
-    font-weight: 600;
-    font-size: 12px;
-    text-align: center;
-    transition: all 0.15s;
-  }
-  .mode-btn.active { background: #293a34; color: #d7deca; border-color: #293a34; }
-  .mode-btn:hover:not(.active) { background: #e8ebe4; }
-
-  .kit-preview {
-    background: #f4f5f1;
-    border: 1px solid #d7deca;
-    border-radius: 4px;
-    padding: 10px;
-    margin-top: 8px;
-    font-size: 12px;
-  }
-  .kit-preview table { font-size: 11px; }
-  .kit-preview th, .kit-preview td { padding: 4px 6px; }
-  .kit-preview th { background: none; border-bottom: 1px solid #c8cfc0; font-size: 10px; }
-
-  .extras-list { margin-bottom: 8px; }
-  .extra-item {
-    display: grid;
-    grid-template-columns: 2fr 1fr auto;
-    gap: 6px;
-    align-items: center;
-    margin-bottom: 5px;
-  }
-  .extra-item select, .extra-item input { padding: 5px 8px; font-size: 12px; }
-
-  table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  th, td { padding: 7px; text-align: left; border-bottom: 1px solid #e8ebe4; }
-  th {
-    font-weight: 700;
-    color: #293a34;
-    font-size: 10px;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    background: #f4f5f1;
-    border-bottom: 2px solid #293a34;
-  }
-
-  /* === RÉSERVATIONS REPLIABLES === */
-  tr.groupe-ligne {
-    border-left: 4px solid #8ba888;
-    cursor: pointer;
-    transition: background 0.15s;
-  }
-  tr.groupe-ligne:hover { background: #f9faf7; }
-  tr.groupe-ligne td:first-child { font-weight: 600; }
-  tr.groupe-ligne.ouvert { background: #f0f3ec; }
-
-  .expand-icon {
-    display: inline-block;
-    width: 16px;
-    height: 16px;
-    line-height: 16px;
-    text-align: center;
-    background: #d7deca;
-    border-radius: 3px;
-    font-size: 10px;
-    margin-right: 6px;
-    color: #293a34;
-    transition: transform 0.15s;
-    user-select: none;
-  }
-  .expand-icon.open { transform: rotate(90deg); }
-
-  tr.details-ligne { background: #f9faf7; display: none; }
-  tr.details-ligne.open { display: table-row; }
-  tr.details-ligne td {
-    padding: 8px 16px;
-    font-size: 11px;
-    color: #5a6b62;
-    border-bottom: 1px solid #e8ebe4;
-  }
-  tr.details-ligne table { font-size: 11px; }
-  tr.details-ligne th, tr.details-ligne td {
-    padding: 4px 8px;
-    border: none;
-    text-transform: none;
-    letter-spacing: 0;
-    background: none;
-    color: #5a6b62;
-    font-weight: normal;
-  }
-  tr.details-ligne tr:first-child th {
-    font-weight: 700;
-    color: #293a34;
-    font-size: 10px;
-    border-bottom: 1px solid #c8cfc0;
-  }
-
-  .badge {
-    display: inline-block;
-    padding: 3px 7px;
-    border-radius: 3px;
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-  }
-  .badge.reserve { background: #f0e6c8; color: #6b5a1e; }
-  .badge.confirme { background: #d7deca; color: #293a34; }
-  .badge.termine { background: #c8d9c8; color: #2c4a2c; }
-  .actions { display: flex; gap: 4px; flex-wrap: wrap; }
-  .message { padding: 10px; border-radius: 4px; margin-bottom: 12px; font-size: 12px; }
-  .message.success { background: #d7deca; color: #293a34; }
-  .message.error { background: #f5d7d7; color: #842029; }
-  .loading { text-align: center; padding: 15px; color: #5a6b62; font-size: 12px; }
-  .spinner {
-    display: inline-block;
-    width: 14px; height: 14px;
-    border: 2px solid #d7deca;
-    border-top-color: #293a34;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    vertical-align: middle;
-    margin-right: 6px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .empty { text-align: center; padding: 15px; color: #5a6b62; font-size: 12px; }
-  .filtre { max-width: 240px; margin-bottom: 10px; font-size: 12px; }
-  .legende { font-size: 10px; color: #5a6b62; margin-bottom: 8px; }
-</style>
-</head>
-<body>
-
-<div class="header">
-  <img src="logo.png" alt="DuoDisplay" onerror="this.style.display='none'">
-  <h1>Gestion Panneaux LED</h1>
-</div>
-
-<div id="message"></div>
-
-<!-- STOCK -->
-<div class="card">
-  <h2>📦 Stock
-    <span style="font-size:11px;color:#5a6b62;font-weight:400;margin-left:8px;">
-      <input type="date" id="dateVerifDebut" style="width:130px;display:inline-block;padding:4px 6px;font-size:11px;">
-      →
-      <input type="date" id="dateVerifFin" style="width:130px;display:inline-block;padding:4px 6px;font-size:11px;">
-      <button class="small" onclick="chargerStock()" style="margin-left:6px;">Vérifier</button>
-    </span>
-  </h2>
-  <div id="stockGrid" class="stock-grid">
-    <div class="loading"><span class="spinner"></span>Chargement...</div>
-  </div>
-</div>
-
-<!-- NOUVELLE RÉSERVATION -->
-<div class="card">
-  <h2>➕ Nouvelle réservation</h2>
-
-  <div class="mode-switch">
-    <div class="mode-btn active" id="mode-btn-kit" onclick="setMode('kit')">🎬 Kit écrans LED</div>
-    <div class="mode-btn" id="mode-btn-libre" onclick="setMode('libre')">📦 Articles seuls</div>
-  </div>
-
-  <div class="form-row">
-    <div class="form-group">
-      <label>Client</label>
-      <input type="text" id="client" placeholder="Nom du client">
-    </div>
-    <div class="form-group" id="bloc-nbEcrans">
-      <label>Nombre d'écrans LED</label>
-      <input type="number" id="nbEcrans" min="0" value="1" oninput="calculerApercu()">
-    </div>
-    <div class="form-group">
-      <label>Date de début</label>
-      <input type="date" id="debut">
-    </div>
-    <div class="form-group">
-      <label>Date de fin</label>
-      <input type="date" id="fin">
-    </div>
-  </div>
-
-  <h3>➕ Articles supplémentaires</h3>
-  <div class="extras-list" id="extrasList"></div>
-  <button class="add-extra" onclick="ajouterExtra()">+ Ajouter un article</button>
-
-  <h3>🔍 Aperçu</h3>
-  <div class="kit-preview" id="kitPreview">
-    <em>Saisissez un nombre d'écrans ou ajoutez des articles.</em>
-  </div>
-
-  <div style="margin-top:12px;">
-    <button id="btnResa" onclick="validerReservation()">Réserver</button>
-  </div>
-</div>
-
-<!-- LISTE RÉSERVATIONS -->
-<div class="card">
-  <h2>📋 Réservations
-    <button class="small" onclick="chargerReservations()" style="margin-left:8px;">🔄 Rafraîchir</button>
-  </h2>
-  <div class="legende">Cliquez sur une ligne pour afficher le détail des articles</div>
-  <input type="text" class="filtre" id="filtreClient" placeholder="Filtrer par client..." oninput="afficherReservations()">
-  <div id="tableReservations" class="loading"><span class="spinner"></span>Chargement...</div>
-</div>
-
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbwV3pXjA5q7GCenjhXRfpdGF1RDTE9bGui-030CrbxWDHnLneMhDkJhR-knrVyWJdaCBg/exec";
 
@@ -375,8 +30,9 @@ function aujourdhui() { return formatDate(new Date()); }
 
 function afficherMessage(texte, type) {
   const el = document.getElementById('message');
-  el.innerHTML = '<div class="message ' + type + '">' + texte + '</div>';
-  setTimeout(function() { el.innerHTML = ''; }, 5000);
+  const txt = (texte === undefined || texte === null) ? "Erreur inconnue" : String(texte);
+  el.innerHTML = '<div class="message ' + type + '">' + txt + '</div>';
+  setTimeout(function() { el.innerHTML = ''; }, 6000);
 }
 
 function setMode(m) {
@@ -415,7 +71,12 @@ function appelAPI(action, methode, data) {
       .then(function(r) { return r.text(); })
       .then(function(text) {
         if (text.trim().startsWith("<")) throw new Error("HTML_RESPONSE");
-        return JSON.parse(text);
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          console.error("Réponse non-JSON :", text);
+          throw new Error("Réponse invalide du serveur");
+        }
       });
   } else {
     url += '?action=' + action;
@@ -502,7 +163,9 @@ function chargerInventairePourExtras() {
       type: "🎬 Panneaux LED complets (châssis + 3 tuiles)",
       total: 0
     });
-  }).catch(function() {});
+  }).catch(function(err) {
+    console.error("Erreur chargement inventaire :", err);
+  });
 }
 
 function ajouterExtra() {
@@ -600,7 +263,7 @@ function calculerApercu() {
 
 // ====== VALIDER ======
 function validerReservation() {
-  const client = document.getElementById('client').value;
+  const client = document.getElementById('client').value.trim();
   const debut = document.getElementById('debut').value;
   const fin = document.getElementById('fin').value;
 
@@ -614,6 +277,9 @@ function validerReservation() {
   btn.disabled = true;
   btn.textContent = 'Envoi...';
 
+  let payload;
+  let action;
+
   if (modeActuel === 'kit') {
     const nbEcrans = parseInt(document.getElementById('nbEcrans').value) || 0;
     if (nbEcrans < 1 && extras.length === 0) {
@@ -622,9 +288,8 @@ function validerReservation() {
       btn.textContent = 'Réserver';
       return;
     }
-    appelAPI('creerReservationKit', 'POST', {
-      client: client, nbEcrans: nbEcrans, debut: debut, fin: fin, extras: extras
-    }).then(traiterReponseResa).catch(traiterErreurResa).finally(resetBtn);
+    action = 'creerReservationKit';
+    payload = { action: action, client: client, nbEcrans: nbEcrans, debut: debut, fin: fin, extras: extras };
   } else {
     if (extras.length === 0) {
       afficherMessage('Ajoutez au moins un article', 'error');
@@ -632,39 +297,41 @@ function validerReservation() {
       btn.textContent = 'Réserver';
       return;
     }
-    appelAPI('creerReservationLibre', 'POST', {
-      client: client, articles: extras, debut: debut, fin: fin
-    }).then(traiterReponseResa).catch(traiterErreurResa).finally(resetBtn);
+    action = 'creerReservationLibre';
+    payload = { action: action, client: client, articles: extras, debut: debut, fin: fin };
   }
+
+  console.log("Envoi :", payload);
+
+  appelAPI(action, 'POST', payload)
+    .then(function(res) {
+      console.log("Réponse :", res);
+      if (res && res.succes) {
+        afficherMessage('✅ ' + (res.message || 'Réservation créée'), 'success');
+        document.getElementById('client').value = '';
+        document.getElementById('nbEcrans').value = 1;
+        document.getElementById('debut').value = '';
+        document.getElementById('fin').value = '';
+        document.getElementById('extrasList').innerHTML = '';
+        document.getElementById('kitPreview').innerHTML = '<em>Aperçu vide.</em>';
+        chargerStock();
+        chargerReservations();
+      } else {
+        const msg = (res && res.message) ? res.message : "Réponse invalide du serveur";
+        afficherMessage('❌ ' + msg, 'error');
+      }
+    })
+    .catch(function(err) {
+      console.error("Erreur :", err);
+      afficherMessage('Erreur : ' + err.message, 'error');
+    })
+    .finally(function() {
+      btn.disabled = false;
+      btn.textContent = 'Réserver';
+    });
 }
 
-function traiterReponseResa(res) {
-  if (res.succes) {
-    afficherMessage('✅ ' + res.message, 'success');
-    document.getElementById('client').value = '';
-    document.getElementById('nbEcrans').value = 1;
-    document.getElementById('debut').value = '';
-    document.getElementById('fin').value = '';
-    document.getElementById('extrasList').innerHTML = '';
-    document.getElementById('kitPreview').innerHTML = '<em>Aperçu vide.</em>';
-    chargerStock();
-    chargerReservations();
-  } else {
-    afficherMessage('❌ ' + res.message, 'error');
-  }
-}
-
-function traiterErreurResa(err) {
-  afficherMessage('Erreur : ' + err.message, 'error');
-}
-
-function resetBtn() {
-  const btn = document.getElementById('btnResa');
-  btn.disabled = false;
-  btn.textContent = 'Réserver';
-}
-
-// ====== RÉSERVATIONS (repliables) ======
+// ====== RÉSERVATIONS ======
 function chargerReservations() {
   const el = document.getElementById('tableReservations');
   el.innerHTML = '<div class="loading"><span class="spinner"></span>Chargement...</div>';
@@ -682,7 +349,6 @@ function afficherReservations() {
   const el = document.getElementById('tableReservations');
   const filtre = document.getElementById('filtreClient').value.toLowerCase();
 
-  // Regrouper par groupe
   const groupes = {};
   reservationsCache.forEach(function(r) {
     if (r.statut === 'Annulé') return;
@@ -710,10 +376,8 @@ function afficherReservations() {
     if (premiere.statut === 'Confirmé') badgeClass = 'confirme';
     else if (premiere.statut === 'Terminé') badgeClass = 'termine';
 
-    // Nombre total d'articles
     const totalArticles = lignes.reduce(function(sum, l) { return sum + l.quantite; }, 0);
 
-    // Ligne principale (repliée)
     html += '<tr class="groupe-ligne" id="row-' + g + '" onclick="toggleGroupe(\'' + g + '\')">';
     html += '<td><span class="expand-icon" id="icon-' + g + '">▶</span>';
     html += '<strong>' + premiere.client + '</strong>';
@@ -730,10 +394,8 @@ function afficherReservations() {
     } else if (premiere.statut === 'Confirmé') {
       html += '<button class="small danger" onclick="event.stopPropagation();changerStatutGroupe(\'' + g + '\', \'Annulé\')">Annuler</button>';
     }
-    html += '</td>';
-    html += '</tr>';
+    html += '</td></tr>';
 
-    // Ligne détails (cachée par défaut)
     html += '<tr class="details-ligne" id="det-' + g + '">';
     html += '<td colspan="6">';
     html += '<table><thead><tr><th>Article</th><th>Quantité</th></tr></thead><tbody>';
@@ -765,12 +427,12 @@ function changerStatutGroupe(groupe, statut) {
   if (!confirm('Passer TOUTES les lignes de ce groupe au statut "' + statut + '" ?')) return;
   appelAPI('changerStatutGroupe', 'POST', {action: 'changerStatutGroupe', groupe: groupe, statut: statut})
     .then(function(res) {
-      if (res.succes) {
+      if (res && res.succes) {
         afficherMessage('✅ ' + res.message, 'success');
         chargerReservations();
         chargerStock();
       } else {
-        afficherMessage('❌ ' + res.message, 'error');
+        afficherMessage('❌ ' + (res && res.message ? res.message : "Erreur"), 'error');
       }
     });
 }
@@ -785,6 +447,3 @@ document.addEventListener('DOMContentLoaded', function() {
   chargerInventairePourExtras();
 });
 </script>
-
-</body>
-</html>
