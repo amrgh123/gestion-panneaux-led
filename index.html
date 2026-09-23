@@ -55,13 +55,17 @@
     border-radius: 4px;
     border-left: 3px solid #d7deca;
     font-size: 12px;
+    cursor: pointer;
+    transition: background 0.15s;
   }
+  .stock-row:hover { background: #eef0ea; }
   .stock-row.featured {
     background: #293a34;
     color: #d7deca;
     border-left-color: #8ba888;
     font-weight: 600;
   }
+  .stock-row.featured:hover { background: #3a4f47; }
   .stock-row.featured .stock-qte { font-size: 18px; color: #d7deca; }
   .stock-row.alerte {
     background: #fce8e8;
@@ -76,6 +80,26 @@
     text-align: right;
   }
   .stock-sub { font-size: 10px; opacity: 0.6; }
+
+  /* Détails dépliables */
+  .stock-details {
+    display: none;
+    background: white;
+    border: 1px solid #d7deca;
+    border-radius: 4px;
+    padding: 8px 12px;
+    margin: 4px 0 8px;
+    font-size: 11px;
+    grid-column: 1 / -1;
+  }
+  .stock-details.open { display: block; }
+  .stock-details table { font-size: 11px; }
+  .stock-details th, .stock-details td { padding: 4px 6px; }
+  .stock-details th {
+    background: #f4f5f1;
+    border-bottom: 1px solid #c8cfc0;
+    font-size: 10px;
+  }
 
   /* ====== FORMULAIRES ====== */
   .form-row {
@@ -123,6 +147,32 @@
   button.small { width: auto; padding: 4px 10px; font-size: 10px; }
   button.add-extra { background: #d7deca; color: #293a34; padding: 5px 10px; font-size: 11px; width: auto; }
   button.remove-extra { background: #a12c2c; color: #f5e5e5; padding: 3px 7px; font-size: 10px; width: auto; }
+
+  /* ====== MODES DE RÉSERVATION ====== */
+  .mode-switch {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
+  .mode-btn {
+    flex: 1;
+    padding: 8px 12px;
+    background: #f4f5f1;
+    color: #5a6b62;
+    border: 2px solid #d7deca;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 12px;
+    text-align: center;
+    transition: all 0.15s;
+  }
+  .mode-btn.active {
+    background: #293a34;
+    color: #d7deca;
+    border-color: #293a34;
+  }
+  .mode-btn:hover:not(.active) { background: #e8ebe4; }
 
   .kit-preview {
     background: #f4f5f1;
@@ -197,10 +247,6 @@
     background: #fce8e8; border-left: 2px solid #c0392b;
     margin-right: 4px; vertical-align: middle;
   }
-
-  .date-bar { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; }
-  .date-bar .form-group { flex: 1; min-width: 120px; margin: 0; }
-  .date-bar button { width: auto; padding: 8px 18px; }
 </style>
 </head>
 <body>
@@ -230,14 +276,20 @@
 <!-- ====== 2. NOUVELLE RÉSERVATION ====== -->
 <div class="card">
   <h2>➕ Nouvelle réservation</h2>
+
+  <div class="mode-switch">
+    <div class="mode-btn active" id="mode-btn-kit" onclick="setMode('kit')">🎬 Kit écrans LED</div>
+    <div class="mode-btn" id="mode-btn-libre" onclick="setMode('libre')">📦 Articles seuls</div>
+  </div>
+
   <div class="form-row">
     <div class="form-group">
       <label>Client</label>
       <input type="text" id="client" placeholder="Nom du client">
     </div>
-    <div class="form-group">
+    <div class="form-group" id="bloc-nbEcrans">
       <label>Nombre d'écrans LED</label>
-      <input type="number" id="nbEcrans" min="1" value="1" oninput="calculerApercu()">
+      <input type="number" id="nbEcrans" min="0" value="1" oninput="calculerApercu()">
     </div>
     <div class="form-group">
       <label>Date de début</label>
@@ -249,17 +301,17 @@
     </div>
   </div>
 
-  <h3>➕ Articles supplémentaires (facultatif)</h3>
+  <h3>➕ Articles supplémentaires</h3>
   <div class="extras-list" id="extrasList"></div>
   <button class="add-extra" onclick="ajouterExtra()">+ Ajouter un article</button>
 
-  <h3>🔍 Aperçu du kit</h3>
+  <h3>🔍 Aperçu</h3>
   <div class="kit-preview" id="kitPreview">
-    <em>Saisissez un nombre d'écrans pour voir le kit calculé automatiquement.</em>
+    <em>Saisissez un nombre d'écrans ou ajoutez des articles.</em>
   </div>
 
   <div style="margin-top:12px;">
-    <button id="btnResa" onclick="creerReservation()">Réserver le kit complet</button>
+    <button id="btnResa" onclick="validerReservation()">Réserver</button>
   </div>
 </div>
 
@@ -276,37 +328,45 @@
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbwV3pXjA5q7GCenjhXRfpdGF1RDTE9bGui-030CrbxWDHnLneMhDkJhR-knrVyWJdaCBg/exec";
 
-// ⚠️ Ratios du kit standard
 const KIT_STANDARD = {
-  "MPI-PLD001-1": { parEcran: 1 },              // CHÂSSIS AVEC POWERBOX
-  "MPI-PLD002-1": { parEcran: 3 },              // TUILE LED
-  "MPI-PLA003":   { fixe: 1 },                  // CÂBLE ALIM 10M
-  "MPI-PLA007":   { fixe: 1 },                  // CÂBLE DATA 10M
-  "MPI-PLA005":   { moins1: true },             // CÂBLE ALIM 0,8M (N-1)
-  "MPI-PLA008":   { moins1: true },             // CÂBLE DATA 0,8M (N-1)
-  "MPI-PLT001":   { arrondi: "ceil", parEcran: 0.1 } // FLIGHT CASE
+  "MPI-PLD001-1": { parEcran: 1 },
+  "MPI-PLD002-1": { parEcran: 3 },
+  "MPI-PLA003":   { fixe: 1 },
+  "MPI-PLA007":   { fixe: 1 },
+  "MPI-PLA005":   { moins1: true },
+  "MPI-PLA008":   { moins1: true },
+  "MPI-PLT001":   { arrondi: "ceil", parEcran: 0.1 }
 };
 
-// ⚠️ IDs du NovaStar (TB6 et TB8 comptés ensemble)
 const NOVASTAR_IDS = ["MPI-NOVASTAR/TB60", "MPI-NOVASTAR/TB8"];
 const ID_CHASSIS = "MPI-PLD001-1";
 const ID_TUILE = "MPI-PLD002-1";
+const KIT_LED_ID = "KIT-LED";
+const KIT_LED_COMPOSANTS = { "MPI-PLD001-1": 1, "MPI-PLD002-1": 3 };
 
 let reservationsCache = [];
 let inventaireCache = [];
+let modeActuel = "kit";
 
 function formatDate(date) {
   return date.getFullYear() + "-" +
          String(date.getMonth() + 1).padStart(2, '0') + "-" +
          String(date.getDate()).padStart(2, '0');
 }
-
 function aujourdhui() { return formatDate(new Date()); }
 
 function afficherMessage(texte, type) {
   const el = document.getElementById('message');
   el.innerHTML = '<div class="message ' + type + '">' + texte + '</div>';
   setTimeout(function() { el.innerHTML = ''; }, 5000);
+}
+
+function setMode(m) {
+  modeActuel = m;
+  document.getElementById('mode-btn-kit').classList.toggle('active', m === 'kit');
+  document.getElementById('mode-btn-libre').classList.toggle('active', m === 'libre');
+  document.getElementById('bloc-nbEcrans').style.display = (m === 'kit') ? 'block' : 'none';
+  calculerApercu();
 }
 
 function fetchJSON(url, tentatives) {
@@ -355,43 +415,49 @@ function chargerStock() {
   const url = API_URL + '?action=disponibilite&debut=' + debut + '&fin=' + fin + '&t=' + Date.now();
   fetchJSON(url)
     .then(function(data) {
-      // Récupérer les quantités de chaque article
       const dispoParId = {};
       data.forEach(function(item) { dispoParId[item.id] = item; });
 
       let html = '';
 
-      // === CARTE SPÉCIALE : PANNEAUX LED COMPLETS ===
+      // === CARTE PRINCIPALE : PANNEAUX LED COMPLETS ===
       const chassis = dispoParId[ID_CHASSIS] ? dispoParId[ID_CHASSIS].disponible : 0;
       const tuiles = dispoParId[ID_TUILE] ? dispoParId[ID_TUILE].disponible : 0;
       const panneauxComplets = Math.min(chassis, Math.floor(tuiles / 3));
 
-      html += '<div class="stock-row featured">';
-      html += '<div class="stock-name">Panneaux LED complets<div class="stock-sub">châssis + 3 tuiles</div></div>';
+      html += '<div class="stock-row featured" onclick="toggleDetails(\'d-led\')">';
+      html += '<div class="stock-name">Panneaux LED complets<div class="stock-sub">châssis + 3 tuiles • cliquer pour détails</div></div>';
       html += '<div class="stock-qte">' + panneauxComplets + '</div>';
       html += '</div>';
+      html += '<div class="stock-details" id="d-led">';
+      html += '<table><tr><th>Composant</th><th>Dispo</th></tr>';
+      html += '<tr><td>Châssis (MPI-PLD001-1)</td><td>' + chassis + '</td></tr>';
+      html += '<tr><td>Tuiles (MPI-PLD002-1)</td><td>' + tuiles + '</td></tr>';
+      html += '</table></div>';
 
-      // === NovaStar TB6 + TB8 fusionnés ===
+      // === NovaStar fusionné ===
       let novaDispo = 0, novaTotal = 0;
+      let novaDetails = '';
       NOVASTAR_IDS.forEach(function(id) {
         if (dispoParId[id]) {
           novaDispo += dispoParId[id].disponible;
           novaTotal += dispoParId[id].total;
+          novaDetails += '<tr><td>' + dispoParId[id].type + '</td><td>' + dispoParId[id].disponible + '</td></tr>';
         }
       });
       if (novaTotal > 0) {
         const cls = novaDispo < 3 ? 'stock-row alerte' : 'stock-row';
-        html += '<div class="' + cls + '">';
-        html += '<div class="stock-name">NovaStar TB6 / TB8<div class="stock-sub">sur ' + novaTotal + ' en stock</div></div>';
+        html += '<div class="' + cls + '" onclick="toggleDetails(\'d-nova\')">';
+        html += '<div class="stock-name">NovaStar TB6 / TB8<div class="stock-sub">cliquer pour détails</div></div>';
         html += '<div class="stock-qte">' + novaDispo + '</div>';
         html += '</div>';
+        html += '<div class="stock-details" id="d-nova">';
+        html += '<table><tr><th>Modèle</th><th>Dispo</th></tr>' + novaDetails + '</table></div>';
       }
 
       // === Autres articles ===
       data.forEach(function(item) {
-        // Sauter les NovaStar (déjà affichés) et les châssis/tuiles (déjà comptés dans "Panneaux LED")
         if (NOVASTAR_IDS.indexOf(item.id) >= 0) return;
-
         const cls = item.disponible < 5 ? 'stock-row alerte' : 'stock-row';
         html += '<div class="' + cls + '">';
         html += '<div class="stock-name">' + item.type + '<div class="stock-sub">sur ' + item.total + ' en stock</div></div>';
@@ -406,11 +472,22 @@ function chargerStock() {
     });
 }
 
+function toggleDetails(id) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
+
 // ====== INVENTAIRE POUR EXTRAS ======
 function chargerInventairePourExtras() {
   if (inventaireCache.length > 0) return;
   appelAPI('inventaire', 'GET').then(function(data) {
     inventaireCache = data;
+    // Ajouter le pseudo-article "Panneaux LED complets" en tête
+    inventaireCache.unshift({
+      id: KIT_LED_ID,
+      type: "🎬 Panneaux LED complets (châssis + 3 tuiles)",
+      total: 0
+    });
   }).catch(function() {});
 }
 
@@ -429,7 +506,6 @@ function ajouterExtra() {
     '<input type="number" class="extra-qte" min="1" value="1" placeholder="Qté">' +
     '<button class="remove-extra" onclick="this.parentElement.remove();calculerApercu();">✕</button>';
 
-  // Recalculer l'aperçu quand on change d'article ou de quantité
   div.querySelector('.extra-select').addEventListener('change', calculerApercu);
   div.querySelector('.extra-qte').addEventListener('input', calculerApercu);
 
@@ -448,7 +524,7 @@ function getExtras() {
 }
 
 // ====== APERÇU DU KIT ======
-function calculerKitLocal(nbEcrans, extras) {
+function calculerKitLocal(nbEcrans) {
   const kit = {};
   for (const id in KIT_STANDARD) {
     const regle = KIT_STANDARD[id];
@@ -459,76 +535,120 @@ function calculerKitLocal(nbEcrans, extras) {
     else qte = nbEcrans * regle.parEcran;
     if (qte > 0) kit[id] = qte;
   }
-  (extras || []).forEach(function(e) {
-    if (kit[e.id]) kit[e.id] += e.quantite;
-    else kit[e.id] = e.quantite;
+  return kit;
+}
+
+function fusionnerExtrasLocal(kit, extras) {
+  extras.forEach(function(extra) {
+    if (extra.id === KIT_LED_ID) {
+      for (const compId in KIT_LED_COMPOSANTS) {
+        const qte = KIT_LED_COMPOSANTS[compId] * extra.quantite;
+        kit[compId] = (kit[compId] || 0) + qte;
+      }
+      return;
+    }
+    if (kit[extra.id]) kit[extra.id] += extra.quantite;
+    else kit[extra.id] = extra.quantite;
   });
   return kit;
 }
 
 function calculerApercu() {
-  const nbEcrans = parseInt(document.getElementById('nbEcrans').value) || 0;
   const el = document.getElementById('kitPreview');
+  const nbEcrans = (modeActuel === 'kit') ? (parseInt(document.getElementById('nbEcrans').value) || 0) : 0;
+  const extras = getExtras();
 
-  if (nbEcrans < 1) {
-    el.innerHTML = '<em>Saisissez un nombre d\'écrans.</em>';
+  let kit = {};
+  if (modeActuel === 'kit' && nbEcrans >= 1) {
+    kit = calculerKitLocal(nbEcrans);
+    // NovaStar automatique (affiché génériquement)
+    kit["MPI-NOVASTAR/TB60"] = 1;
+  }
+  kit = fusionnerExtrasLocal(kit, extras);
+
+  if (Object.keys(kit).length === 0) {
+    el.innerHTML = '<em>Saisissez un nombre d\'écrans ou ajoutez des articles.</em>';
     return;
   }
 
-  const kit = calculerKitLocal(nbEcrans, getExtras());
   let html = '<table><thead><tr><th>Article</th><th>Quantité</th></tr></thead><tbody>';
   for (const id in kit) {
-    const item = inventaireCache.find(function(i) { return i.id === id; });
-    const label = item ? item.type : id;
+    let label = id;
+    if (id === "MPI-NOVASTAR/TB60") label = "NovaStar TB6 / TB8 (auto)";
+    else {
+      const item = inventaireCache.find(function(i) { return i.id === id; });
+      label = item ? item.type : id;
+    }
     html += '<tr><td>' + label + '</td><td>' + kit[id] + '</td></tr>';
   }
   html += '</tbody></table>';
   el.innerHTML = html;
 }
 
-// ====== CRÉER LA RÉSERVATION ======
-function creerReservation() {
-  const data = {
-    action: 'creerReservationKit',
-    client: document.getElementById('client').value,
-    nbEcrans: parseInt(document.getElementById('nbEcrans').value),
-    debut: document.getElementById('debut').value,
-    fin: document.getElementById('fin').value,
-    extras: getExtras()
-  };
+// ====== VALIDER LA RÉSERVATION ======
+function validerReservation() {
+  const client = document.getElementById('client').value;
+  const debut = document.getElementById('debut').value;
+  const fin = document.getElementById('fin').value;
 
-  if (!data.client || !data.nbEcrans || !data.debut || !data.fin) {
-    afficherMessage('Veuillez remplir tous les champs', 'error');
+  if (!client || !debut || !fin) {
+    afficherMessage('Veuillez remplir le client et les dates', 'error');
     return;
   }
 
+  const extras = getExtras();
   const btn = document.getElementById('btnResa');
   btn.disabled = true;
   btn.textContent = 'Envoi...';
 
-  appelAPI('creerReservationKit', 'POST', data)
-    .then(function(res) {
-      if (res.succes) {
-        afficherMessage('✅ ' + res.message, 'success');
-        document.getElementById('client').value = '';
-        document.getElementById('nbEcrans').value = 1;
-        document.getElementById('debut').value = '';
-        document.getElementById('fin').value = '';
-        document.getElementById('extrasList').innerHTML = '';
-        document.getElementById('kitPreview').innerHTML = '<em>Aperçu vide.</em>';
-        chargerStock();
-        chargerReservations();
-      } else {
-        afficherMessage('❌ ' + res.message, 'error');
-      }
-    })
-    .catch(function(err) {
-      afficherMessage('Erreur : ' + err.message, 'error');
-    })
-    .finally(function() {
+  if (modeActuel === 'kit') {
+    const nbEcrans = parseInt(document.getElementById('nbEcrans').value) || 0;
+    if (nbEcrans < 1 && extras.length === 0) {
+      afficherMessage('Saisissez au moins 1 écran ou un article', 'error');
       btn.disabled = false;
-      btn.textContent = 'Réserver le kit complet';
-    });
+      btn.textContent = 'Réserver';
+      return;
+    }
+    appelAPI('creerReservationKit', 'POST', {
+      client: client, nbEcrans: nbEcrans, debut: debut, fin: fin, extras: extras
+    }).then(traiterReponseResa).catch(traiterErreurResa).finally(resetBtn);
+  } else {
+    if (extras.length === 0) {
+      afficherMessage('Ajoutez au moins un article', 'error');
+      btn.disabled = false;
+      btn.textContent = 'Réserver';
+      return;
+    }
+    appelAPI('creerReservationLibre', 'POST', {
+      client: client, articles: extras, debut: debut, fin: fin
+    }).then(traiterReponseResa).catch(traiterErreurResa).finally(resetBtn);
+  }
+}
+
+function traiterReponseResa(res) {
+  if (res.succes) {
+    afficherMessage('✅ ' + res.message, 'success');
+    document.getElementById('client').value = '';
+    document.getElementById('nbEcrans').value = 1;
+    document.getElementById('debut').value = '';
+    document.getElementById('fin').value = '';
+    document.getElementById('extrasList').innerHTML = '';
+    document.getElementById('kitPreview').innerHTML = '<em>Aperçu vide.</em>';
+    chargerStock();
+    chargerReservations();
+  } else {
+    afficherMessage('❌ ' + res.message, 'error');
+  }
+}
+
+function traiterErreurResa(err) {
+  afficherMessage('Erreur : ' + err.message, 'error');
+}
+
+function resetBtn() {
+  const btn = document.getElementById('btnResa');
+  btn.disabled = false;
+  btn.textContent = 'Réserver';
 }
 
 // ====== LISTE DES RÉSERVATIONS ======
@@ -549,7 +669,6 @@ function afficherReservations() {
   const el = document.getElementById('tableReservations');
   const filtre = document.getElementById('filtreClient').value.toLowerCase();
 
-  // Grouper par groupe
   const groupes = {};
   reservationsCache.forEach(function(r) {
     if (r.statut === 'Annulé') return;
@@ -559,7 +678,6 @@ function afficherReservations() {
     groupes[g].push(r);
   });
 
-  // Trier les groupes par date de début
   const groupesTries = Object.keys(groupes).sort(function(a, b) {
     return groupes[a][0].debut.localeCompare(groupes[b][0].debut);
   });
