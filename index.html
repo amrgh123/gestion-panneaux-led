@@ -75,8 +75,10 @@ tr.details-ligne tr:first-child th { font-weight: 700; color: #293a34; font-size
 .badge.termine { background: #c8d9c8; color: #2c4a2c; }
 .actions { display: flex; gap: 4px; flex-wrap: wrap; }
 .message { padding: 10px; border-radius: 4px; margin-bottom: 12px; font-size: 12px; }
-.message.success { background: #d7deca; color: #293a34; }
-.message.error { background: #f5d7d7; color: #842029; }
+.message.success { background: #d7deca; color: #293a34; border-left: 4px solid #4a7a4a; padding: 12px 15px; line-height: 1.5; }
+.message.error { background: #f5d7d7; color: #842029; border-left: 4px solid #c0392b; padding: 12px 15px; font-size: 13px; line-height: 1.5; box-shadow: 0 2px 8px rgba(192, 57, 43, 0.15); }
+.message.error strong { color: #842029; display: block; margin-bottom: 4px; }
+.message.error em { color: #5a3c3c; font-style: italic; font-size: 12px; }
 .loading { text-align: center; padding: 15px; color: #5a6b62; font-size: 12px; }
 .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid #d7deca; border-top-color: #293a34; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 6px; }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -185,7 +187,11 @@ function afficherMessage(texte, type) {
   const el = document.getElementById('message');
   const txt = (texte === undefined || texte === null) ? "Erreur inconnue" : String(texte);
   el.innerHTML = '<div class="message ' + type + '">' + txt + '</div>';
-  setTimeout(function() { el.innerHTML = ''; }, 6000);
+  const duree = (type === 'error') ? 15000 : 6000;
+  setTimeout(function() { el.innerHTML = ''; }, duree);
+  if (type === 'error') {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
 }
 
 function setMode(m) {
@@ -383,32 +389,46 @@ function validerReservation() {
   const client = document.getElementById('client').value.trim();
   const debut = document.getElementById('debut').value;
   const fin = document.getElementById('fin').value;
-  if (!client || !debut || !fin) { afficherMessage('Veuillez remplir le client et les dates', 'error'); return; }
+
+  if (!client || !debut || !fin) {
+    afficherMessage('Veuillez remplir le client et les dates', 'error');
+    return;
+  }
+
   const extras = getExtras();
   const btn = document.getElementById('btnResa');
   btn.disabled = true;
   btn.textContent = 'Envoi...';
+
   let payload, action;
+
   if (modeActuel === 'kit') {
     const nbEcrans = parseInt(document.getElementById('nbEcrans').value) || 0;
     if (nbEcrans < 1 && extras.length === 0) {
       afficherMessage('Saisissez au moins 1 écran ou un article', 'error');
-      btn.disabled = false; btn.textContent = 'Réserver'; return;
+      btn.disabled = false;
+      btn.textContent = 'Réserver';
+      return;
     }
     action = 'creerReservationKit';
     payload = { action: action, client: client, nbEcrans: nbEcrans, debut: debut, fin: fin, extras: extras };
   } else {
     if (extras.length === 0) {
       afficherMessage('Ajoutez au moins un article', 'error');
-      btn.disabled = false; btn.textContent = 'Réserver'; return;
+      btn.disabled = false;
+      btn.textContent = 'Réserver';
+      return;
     }
     action = 'creerReservationLibre';
     payload = { action: action, client: client, articles: extras, debut: debut, fin: fin };
   }
-  console.log("Envoi:", payload);
+
+  console.log("Envoi :", payload);
+
   appelAPI(action, 'POST', payload)
     .then(function(res) {
-      console.log("Réponse:", res);
+      console.log("Réponse :", res);
+
       if (res && res.succes) {
         afficherMessage('✅ ' + (res.message || 'Réservation créée'), 'success');
         document.getElementById('client').value = '';
@@ -420,11 +440,34 @@ function validerReservation() {
         chargerStock();
         chargerReservations();
       } else {
-        afficherMessage('❌ ' + (res && res.message ? res.message : "Réponse invalide"), 'error');
+        const msg = (res && res.message) ? res.message : "Réservation impossible";
+        let messageComplet = '❌ <strong>Réservation refusée</strong><br>' + msg;
+
+        if (msg.toLowerCase().indexOf('insuffisant') !== -1) {
+          messageComplet += '<br><br>👉 <em>Conseil : vérifiez la disponibilité pour cette période, ou réduisez la quantité / changez les dates.</em>';
+        } else if (msg.toLowerCase().indexOf('matériel inconnu') !== -1) {
+          messageComplet += '<br><br>👉 <em>Conseil : un des articles demandés n\'existe pas dans l\'inventaire.</em>';
+        } else if (msg.toLowerCase().indexOf('vide') !== -1) {
+          messageComplet += '<br><br>👉 <em>Conseil : aucun article à réserver. Vérifiez votre sélection.</em>';
+        }
+
+        afficherMessage(messageComplet, 'error');
       }
     })
-    .catch(function(err) { console.error(err); afficherMessage('Erreur : ' + err.message, 'error'); })
-    .finally(function() { btn.disabled = false; btn.textContent = 'Réserver'; });
+    .catch(function(err) {
+      console.error("Erreur :", err);
+      if (err.message === 'HTML_RESPONSE') {
+        afficherMessage('❌ <strong>Erreur de connexion</strong><br>Le serveur ne répond pas correctement. Vérifiez votre connexion ou réessayez dans quelques secondes.', 'error');
+      } else if (err.message === 'Réponse invalide') {
+        afficherMessage('❌ <strong>Erreur de communication</strong><br>Le serveur a renvoyé une réponse invalide. Réessayez dans quelques instants.', 'error');
+      } else {
+        afficherMessage('❌ <strong>Erreur</strong> : ' + err.message, 'error');
+      }
+    })
+    .finally(function() {
+      btn.disabled = false;
+      btn.textContent = 'Réserver';
+    });
 }
 
 function chargerReservations() {
@@ -473,6 +516,8 @@ function afficherReservations() {
       html += '<button class="small danger" onclick="event.stopPropagation();changerStatutGroupe(\'' + g + '\', \'Annulé\')">Annuler</button>';
     } else if (premiere.statut === 'Confirmé') {
       html += '<button class="small danger" onclick="event.stopPropagation();changerStatutGroupe(\'' + g + '\', \'Annulé\')">Annuler</button>';
+    } else if (premiere.statut === 'Terminé') {
+      html += '<button class="small success" onclick="event.stopPropagation();validerRetour(\'' + g + '\')">✅ Valider le retour</button>';
     }
     html += '</td></tr>';
     html += '<tr class="details-ligne" id="det-' + g + '"><td colspan="6">';
@@ -497,8 +542,30 @@ function toggleGroupe(g) {
 }
 
 function changerStatutGroupe(groupe, statut) {
-  if (!confirm('Passer TOUTES les lignes de ce groupe au statut "' + statut + '" ?')) return;
+  let message;
+  if (statut === 'Annulé') {
+    message = '⚠️ ATTENTION : Cette action va SUPPRIMER DÉFINITIVEMENT toutes les lignes de ce groupe.\n\nContinuer ?';
+  } else {
+    message = 'Passer toutes les lignes de ce groupe au statut "' + statut + '" ?';
+  }
+  if (!confirm(message)) return;
+
   appelAPI('changerStatutGroupe', 'POST', {action: 'changerStatutGroupe', groupe: groupe, statut: statut})
+    .then(function(res) {
+      if (res && res.succes) {
+        afficherMessage('✅ ' + res.message, 'success');
+        chargerReservations();
+        chargerStock();
+      } else {
+        afficherMessage('❌ ' + (res && res.message ? res.message : "Erreur"), 'error');
+      }
+    });
+}
+
+function validerRetour(groupe) {
+  if (!confirm('⚠️ ATTENTION : Cette action va SUPPRIMER DÉFINITIVEMENT toutes les lignes de ce groupe.\n\nLe matériel est bien revenu en stock ?\n\nContinuer ?')) return;
+
+  appelAPI('changerStatutGroupe', 'POST', {action: 'changerStatutGroupe', groupe: groupe, statut: 'Supprimer'})
     .then(function(res) {
       if (res && res.succes) {
         afficherMessage('✅ ' + res.message, 'success');
