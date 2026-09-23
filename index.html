@@ -11,79 +11,100 @@
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     background: #f4f5f1;
     color: #293a34;
-    padding: 15px;
-    max-width: 1200px;
+    padding: 12px;
+    max-width: 1300px;
     margin: 0 auto;
-    font-size: 14px;
+    font-size: 13px;
   }
   .header {
     display: flex;
     align-items: center;
-    gap: 15px;
-    margin-bottom: 20px;
-    padding: 15px 20px;
+    gap: 12px;
+    margin-bottom: 15px;
+    padding: 12px 18px;
     background: #293a34;
     border-radius: 6px;
   }
-  .header img { height: 45px; width: auto; }
-  .header h1 { font-size: 22px; font-weight: 700; color: #d7deca; letter-spacing: -0.5px; }
-  h2 { font-size: 16px; margin-bottom: 12px; color: #293a34; }
-  h3 { font-size: 14px; margin: 15px 0 10px; color: #5a6b62; text-transform: uppercase; letter-spacing: 0.5px; }
+  .header img { height: 38px; width: auto; }
+  .header h1 { font-size: 20px; font-weight: 700; color: #d7deca; letter-spacing: -0.5px; }
+
+  h2 { font-size: 15px; margin-bottom: 10px; color: #293a34; }
+  h3 { font-size: 12px; margin: 12px 0 8px; color: #5a6b62; text-transform: uppercase; letter-spacing: 0.5px; }
+
   .card {
     background: white;
     border-radius: 6px;
-    padding: 18px;
-    margin-bottom: 15px;
+    padding: 14px 16px;
+    margin-bottom: 12px;
     border: 1px solid #e2e5dc;
     box-shadow: 0 1px 3px rgba(41,58,52,0.06);
   }
-  .date-bar { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
-  .date-bar .form-group { flex: 1; min-width: 140px; margin: 0; }
-  .date-bar button { width: auto; padding: 9px 22px; }
+
+  /* ====== STOCK COMPACT ====== */
   .stock-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 6px;
   }
-  .stock-card {
+  .stock-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 10px;
+    background: #f9faf7;
+    border-radius: 4px;
+    border-left: 3px solid #d7deca;
+    font-size: 12px;
+  }
+  .stock-row.featured {
     background: #293a34;
     color: #d7deca;
-    border-radius: 6px;
-    padding: 15px;
-    border-left: 4px solid #d7deca;
+    border-left-color: #8ba888;
+    font-weight: 600;
   }
-  .stock-card.alerte { border-left-color: #c0392b; }
-  .stock-card .label { font-size: 11px; opacity: 0.85; margin-bottom: 6px; }
-  .stock-card .value { font-size: 30px; font-weight: 700; line-height: 1; }
-  .stock-card .sub { font-size: 11px; opacity: 0.7; margin-top: 6px; }
+  .stock-row.featured .stock-qte { font-size: 18px; color: #d7deca; }
+  .stock-row.alerte {
+    background: #fce8e8;
+    border-left-color: #c0392b;
+  }
+  .stock-row.alerte .stock-qte { color: #c0392b; font-weight: 700; }
+  .stock-name { flex: 1; margin-right: 10px; line-height: 1.3; }
+  .stock-qte {
+    font-size: 15px;
+    font-weight: 700;
+    min-width: 40px;
+    text-align: right;
+  }
+  .stock-sub { font-size: 10px; opacity: 0.6; }
 
+  /* ====== FORMULAIRES ====== */
   .form-row {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 10px;
-    margin-bottom: 10px;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 8px;
+    margin-bottom: 8px;
   }
-  .form-group { margin-bottom: 8px; }
+  .form-group { margin-bottom: 6px; }
   .form-group label {
     display: block;
-    font-size: 11px;
+    font-size: 10px;
     color: #5a6b62;
-    margin-bottom: 5px;
+    margin-bottom: 4px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
     font-weight: 600;
   }
   input, select, button {
     width: 100%;
-    padding: 10px 12px;
+    padding: 8px 10px;
     border: 1px solid #c8cfc0;
     border-radius: 4px;
-    font-size: 14px;
+    font-size: 13px;
     font-family: inherit;
     background: white;
     color: #293a34;
   }
-  input:focus, select:focus { outline: none; border-color: #293a34; box-shadow: 0 0 0 3px rgba(41,58,52,0.1); }
+  input:focus, select:focus { outline: none; border-color: #293a34; box-shadow: 0 0 0 2px rgba(41,58,52,0.1); }
   button {
     background: #293a34;
     color: #d7deca;
@@ -92,44 +113,41 @@
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    font-size: 12px;
+    font-size: 11px;
+    padding: 9px 14px;
   }
   button:hover { background: #3a4f47; }
   button:disabled { background: #a8b0a5; cursor: not-allowed; }
   button.danger { background: #a12c2c; color: #f5e5e5; }
   button.success { background: #4a7a4a; color: #e8f0e0; }
-  button.small { width: auto; padding: 6px 12px; font-size: 11px; }
-  button.add-extra { background: #d7deca; color: #293a34; padding: 6px 10px; font-size: 11px; }
-  button.remove-extra { background: #a12c2c; color: #f5e5e5; padding: 4px 8px; font-size: 11px; }
+  button.small { width: auto; padding: 4px 10px; font-size: 10px; }
+  button.add-extra { background: #d7deca; color: #293a34; padding: 5px 10px; font-size: 11px; width: auto; }
+  button.remove-extra { background: #a12c2c; color: #f5e5e5; padding: 3px 7px; font-size: 10px; width: auto; }
 
   .kit-preview {
     background: #f4f5f1;
     border: 1px solid #d7deca;
     border-radius: 4px;
-    padding: 12px;
-    margin-top: 10px;
-    font-size: 13px;
+    padding: 10px;
+    margin-top: 8px;
+    font-size: 12px;
   }
-  .kit-preview table { font-size: 12px; }
-  .kit-preview th, .kit-preview td { padding: 5px 8px; }
-  .kit-preview th {
-    background: none;
-    border-bottom: 1px solid #c8cfc0;
-    font-size: 10px;
-  }
+  .kit-preview table { font-size: 11px; }
+  .kit-preview th, .kit-preview td { padding: 4px 6px; }
+  .kit-preview th { background: none; border-bottom: 1px solid #c8cfc0; font-size: 10px; }
 
-  .extras-list { margin-bottom: 10px; }
+  .extras-list { margin-bottom: 8px; }
   .extra-item {
     display: grid;
     grid-template-columns: 2fr 1fr auto;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
-    margin-bottom: 6px;
+    margin-bottom: 5px;
   }
-  .extra-item select, .extra-item input { margin: 0; padding: 6px 8px; font-size: 12px; }
+  .extra-item select, .extra-item input { padding: 5px 8px; font-size: 12px; }
 
-  table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  th, td { padding: 8px; text-align: left; border-bottom: 1px solid #e8ebe4; }
+  table { width: 100%; border-collapse: collapse; font-size: 12px; }
+  th, td { padding: 7px; text-align: left; border-bottom: 1px solid #e8ebe4; }
   th {
     font-weight: 700;
     color: #293a34;
@@ -139,18 +157,14 @@
     background: #f4f5f1;
     border-bottom: 2px solid #293a34;
   }
-  tr.groupe { border-left: 4px solid #8ba888; }
-  tr.groupe-header {
-    background: #d7deca;
-    font-weight: 600;
-  }
-  tr.groupe-header td { padding: 8px 10px; font-size: 12px; }
+  tr.groupe-ligne { border-left: 4px solid #8ba888; }
+  tr.groupe-ligne td:first-child { font-weight: 600; }
   tr.alerte { background: #fce8e8; }
   tr.alerte td { color: #7a1f1f; }
   tr.alerte .badge { background: #c0392b !important; color: white !important; }
   .badge {
     display: inline-block;
-    padding: 3px 8px;
+    padding: 3px 7px;
     border-radius: 3px;
     font-size: 10px;
     font-weight: 700;
@@ -159,41 +173,34 @@
   .badge.reserve { background: #f0e6c8; color: #6b5a1e; }
   .badge.confirme { background: #d7deca; color: #293a34; }
   .badge.termine { background: #c8d9c8; color: #2c4a2c; }
-  .actions { display: flex; gap: 5px; flex-wrap: wrap; }
-  .message { padding: 12px; border-radius: 4px; margin-bottom: 12px; font-size: 13px; }
+  .actions { display: flex; gap: 4px; flex-wrap: wrap; }
+  .message { padding: 10px; border-radius: 4px; margin-bottom: 12px; font-size: 12px; }
   .message.success { background: #d7deca; color: #293a34; }
   .message.error { background: #f5d7d7; color: #842029; }
-  .loading { text-align: center; padding: 20px; color: #5a6b62; font-size: 13px; }
+  .loading { text-align: center; padding: 15px; color: #5a6b62; font-size: 12px; }
   .spinner {
     display: inline-block;
-    width: 16px; height: 16px;
+    width: 14px; height: 14px;
     border: 2px solid #d7deca;
     border-top-color: #293a34;
     border-radius: 50%;
     animation: spin 0.8s linear infinite;
     vertical-align: middle;
-    margin-right: 8px;
+    margin-right: 6px;
   }
   @keyframes spin { to { transform: rotate(360deg); } }
-  .empty { text-align: center; padding: 20px; color: #5a6b62; font-size: 13px; }
-  .filtre { max-width: 260px; margin-bottom: 12px; }
-  .legende { font-size: 11px; color: #5a6b62; margin-bottom: 10px; }
+  .empty { text-align: center; padding: 15px; color: #5a6b62; font-size: 12px; }
+  .filtre { max-width: 240px; margin-bottom: 10px; font-size: 12px; }
+  .legende { font-size: 10px; color: #5a6b62; margin-bottom: 8px; }
   .legende span {
-    display: inline-block; width: 12px; height: 12px;
-    background: #fce8e8; border-left: 3px solid #c0392b;
-    margin-right: 5px; vertical-align: middle;
+    display: inline-block; width: 10px; height: 10px;
+    background: #fce8e8; border-left: 2px solid #c0392b;
+    margin-right: 4px; vertical-align: middle;
   }
-  .tabs { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
-  .tab {
-    padding: 8px 16px;
-    background: white;
-    border: 1px solid #c8cfc0;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 600;
-  }
-  .tab.active { background: #293a34; color: #d7deca; border-color: #293a34; }
+
+  .date-bar { display: flex; gap: 8px; align-items: flex-end; flex-wrap: wrap; }
+  .date-bar .form-group { flex: 1; min-width: 120px; margin: 0; }
+  .date-bar button { width: auto; padding: 8px 18px; }
 </style>
 </head>
 <body>
@@ -205,97 +212,85 @@
 
 <div id="message"></div>
 
-<div class="tabs">
-  <div class="tab active" onclick="afficherOnglet('stock')">📦 Stock</div>
-  <div class="tab" onclick="afficherOnglet('reservation')">➕ Nouvelle réservation</div>
-  <div class="tab" onclick="afficherOnglet('liste')">📋 Réservations</div>
-</div>
-
-<!-- STOCK -->
-<div id="onglet-stock">
-  <div class="card">
-    <h2>📅 Vérifier la disponibilité</h2>
-    <div class="date-bar">
-      <div class="form-group">
-        <label>Date de début</label>
-        <input type="date" id="dateVerifDebut">
-      </div>
-      <div class="form-group">
-        <label>Date de fin</label>
-        <input type="date" id="dateVerifFin">
-      </div>
-      <button onclick="chargerStock()">Vérifier</button>
-    </div>
-  </div>
-  <div class="card">
-    <h2>📦 Stock disponible <span id="periodeLabel" style="font-size:12px;color:#5a6b62;font-weight:400;"></span></h2>
-    <div id="stockGrid" class="stock-grid">
-      <div class="loading"><span class="spinner"></span>Chargement...</div>
-    </div>
+<!-- ====== 1. STOCK ====== -->
+<div class="card">
+  <h2>📦 Stock
+    <span style="font-size:11px;color:#5a6b62;font-weight:400;margin-left:8px;">
+      <input type="date" id="dateVerifDebut" style="width:130px;display:inline-block;padding:4px 6px;font-size:11px;">
+      →
+      <input type="date" id="dateVerifFin" style="width:130px;display:inline-block;padding:4px 6px;font-size:11px;">
+      <button class="small" onclick="chargerStock()" style="margin-left:6px;">Vérifier</button>
+    </span>
+  </h2>
+  <div id="stockGrid" class="stock-grid">
+    <div class="loading"><span class="spinner"></span>Chargement...</div>
   </div>
 </div>
 
-<!-- RÉSERVATION -->
-<div id="onglet-reservation" style="display:none;">
-  <div class="card">
-    <h2>➕ Nouvelle réservation</h2>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Client</label>
-        <input type="text" id="client" placeholder="Nom du client">
-      </div>
-      <div class="form-group">
-        <label>Nombre d'écrans LED</label>
-        <input type="number" id="nbEcrans" min="1" value="1" oninput="calculerApercu()">
-      </div>
-      <div class="form-group">
-        <label>Date de début</label>
-        <input type="date" id="debut">
-      </div>
-      <div class="form-group">
-        <label>Date de fin</label>
-        <input type="date" id="fin">
-      </div>
+<!-- ====== 2. NOUVELLE RÉSERVATION ====== -->
+<div class="card">
+  <h2>➕ Nouvelle réservation</h2>
+  <div class="form-row">
+    <div class="form-group">
+      <label>Client</label>
+      <input type="text" id="client" placeholder="Nom du client">
     </div>
-
-    <h3>➕ Ajouter des articles supplémentaires (facultatif)</h3>
-    <div class="extras-list" id="extrasList"></div>
-    <button class="add-extra" onclick="ajouterExtra()">+ Ajouter un article</button>
-
-    <h3>🔍 Aperçu du kit</h3>
-    <div class="kit-preview" id="kitPreview">
-      <em>Saisissez un nombre d'écrans pour voir le kit calculé automatiquement.</em>
+    <div class="form-group">
+      <label>Nombre d'écrans LED</label>
+      <input type="number" id="nbEcrans" min="1" value="1" oninput="calculerApercu()">
     </div>
-
-    <div style="margin-top:15px;">
-      <button id="btnResa" onclick="creerReservation()">Réserver le kit complet</button>
+    <div class="form-group">
+      <label>Date de début</label>
+      <input type="date" id="debut">
     </div>
+    <div class="form-group">
+      <label>Date de fin</label>
+      <input type="date" id="fin">
+    </div>
+  </div>
+
+  <h3>➕ Articles supplémentaires (facultatif)</h3>
+  <div class="extras-list" id="extrasList"></div>
+  <button class="add-extra" onclick="ajouterExtra()">+ Ajouter un article</button>
+
+  <h3>🔍 Aperçu du kit</h3>
+  <div class="kit-preview" id="kitPreview">
+    <em>Saisissez un nombre d'écrans pour voir le kit calculé automatiquement.</em>
+  </div>
+
+  <div style="margin-top:12px;">
+    <button id="btnResa" onclick="creerReservation()">Réserver le kit complet</button>
   </div>
 </div>
 
-<!-- LISTE -->
-<div id="onglet-liste" style="display:none;">
-  <div class="card">
-    <h2>📋 Réservations <button class="small" onclick="chargerReservations()" style="margin-left:8px;">🔄 Rafraîchir</button></h2>
-    <div class="legende"><span></span> Ligne rouge = surréservation détectée sur au moins un jour</div>
-    <input type="text" class="filtre" id="filtreClient" placeholder="Filtrer par client..." oninput="afficherReservations()">
-    <div id="tableReservations" class="loading"><span class="spinner"></span>Chargement...</div>
-  </div>
+<!-- ====== 3. LISTE DES RÉSERVATIONS ====== -->
+<div class="card">
+  <h2>📋 Réservations
+    <button class="small" onclick="chargerReservations()" style="margin-left:8px;">🔄 Rafraîchir</button>
+  </h2>
+  <div class="legende"><span></span> Ligne rouge = surréservation détectée</div>
+  <input type="text" class="filtre" id="filtreClient" placeholder="Filtrer par client..." oninput="afficherReservations()">
+  <div id="tableReservations" class="loading"><span class="spinner"></span>Chargement...</div>
 </div>
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbwV3pXjA5q7GCenjhXRfpdGF1RDTE9bGui-030CrbxWDHnLneMhDkJhR-knrVyWJdaCBg/exec";
 
-// ⚠️ Ratios identiques à ceux du backend
+// ⚠️ Ratios du kit standard
 const KIT_STANDARD = {
-  "MPI-PLD001-1": { parEcran: 1 },
-  "MPI-PLD002-1": { parEcran: 3 },
-  "MPI-PLA003":   { fixe: 1 },
-  "MPI-PLA007":   { fixe: 1 },
-  "MPI-PLA005":   { moins1: true },
-  "MPI-PLA008":   { moins1: true },
-  "MPI-PLT001":   { arrondi: "ceil", parEcran: 0.1 }
+  "MPI-PLD001-1": { parEcran: 1 },              // CHÂSSIS AVEC POWERBOX
+  "MPI-PLD002-1": { parEcran: 3 },              // TUILE LED
+  "MPI-PLA003":   { fixe: 1 },                  // CÂBLE ALIM 10M
+  "MPI-PLA007":   { fixe: 1 },                  // CÂBLE DATA 10M
+  "MPI-PLA005":   { moins1: true },             // CÂBLE ALIM 0,8M (N-1)
+  "MPI-PLA008":   { moins1: true },             // CÂBLE DATA 0,8M (N-1)
+  "MPI-PLT001":   { arrondi: "ceil", parEcran: 0.1 } // FLIGHT CASE
 };
+
+// ⚠️ IDs du NovaStar (TB6 et TB8 comptés ensemble)
+const NOVASTAR_IDS = ["MPI-NOVASTAR/TB60", "MPI-NOVASTAR/TB8"];
+const ID_CHASSIS = "MPI-PLD001-1";
+const ID_TUILE = "MPI-PLD002-1";
 
 let reservationsCache = [];
 let inventaireCache = [];
@@ -312,16 +307,6 @@ function afficherMessage(texte, type) {
   const el = document.getElementById('message');
   el.innerHTML = '<div class="message ' + type + '">' + texte + '</div>';
   setTimeout(function() { el.innerHTML = ''; }, 5000);
-}
-
-function afficherOnglet(nom) {
-  document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
-  event.target.classList.add('active');
-  document.getElementById('onglet-stock').style.display = (nom === 'stock') ? 'block' : 'none';
-  document.getElementById('onglet-reservation').style.display = (nom === 'reservation') ? 'block' : 'none';
-  document.getElementById('onglet-liste').style.display = (nom === 'liste') ? 'block' : 'none';
-  if (nom === 'liste') chargerReservations();
-  if (nom === 'reservation') chargerInventairePourExtras();
 }
 
 function fetchJSON(url, tentatives) {
@@ -360,26 +345,60 @@ function appelAPI(action, methode, data) {
   }
 }
 
-// ===== STOCK =====
+// ====== STOCK ======
 function chargerStock() {
   const debut = document.getElementById('dateVerifDebut').value || aujourdhui();
   const fin = document.getElementById('dateVerifFin').value || aujourdhui();
   const el = document.getElementById('stockGrid');
   el.innerHTML = '<div class="loading"><span class="spinner"></span>Chargement...</div>';
-  document.getElementById('periodeLabel').textContent = '(du ' + debut + ' au ' + fin + ')';
 
   const url = API_URL + '?action=disponibilite&debut=' + debut + '&fin=' + fin + '&t=' + Date.now();
   fetchJSON(url)
     .then(function(data) {
+      // Récupérer les quantités de chaque article
+      const dispoParId = {};
+      data.forEach(function(item) { dispoParId[item.id] = item; });
+
       let html = '';
-      data.forEach(function(item) {
-        const cls = item.disponible < 5 ? 'stock-card alerte' : 'stock-card';
+
+      // === CARTE SPÉCIALE : PANNEAUX LED COMPLETS ===
+      const chassis = dispoParId[ID_CHASSIS] ? dispoParId[ID_CHASSIS].disponible : 0;
+      const tuiles = dispoParId[ID_TUILE] ? dispoParId[ID_TUILE].disponible : 0;
+      const panneauxComplets = Math.min(chassis, Math.floor(tuiles / 3));
+
+      html += '<div class="stock-row featured">';
+      html += '<div class="stock-name">Panneaux LED complets<div class="stock-sub">châssis + 3 tuiles</div></div>';
+      html += '<div class="stock-qte">' + panneauxComplets + '</div>';
+      html += '</div>';
+
+      // === NovaStar TB6 + TB8 fusionnés ===
+      let novaDispo = 0, novaTotal = 0;
+      NOVASTAR_IDS.forEach(function(id) {
+        if (dispoParId[id]) {
+          novaDispo += dispoParId[id].disponible;
+          novaTotal += dispoParId[id].total;
+        }
+      });
+      if (novaTotal > 0) {
+        const cls = novaDispo < 3 ? 'stock-row alerte' : 'stock-row';
         html += '<div class="' + cls + '">';
-        html += '<div class="label">' + item.type + '</div>';
-        html += '<div class="value">' + item.disponible + '</div>';
-        html += '<div class="sub">sur ' + item.total + ' en stock</div>';
+        html += '<div class="stock-name">NovaStar TB6 / TB8<div class="stock-sub">sur ' + novaTotal + ' en stock</div></div>';
+        html += '<div class="stock-qte">' + novaDispo + '</div>';
+        html += '</div>';
+      }
+
+      // === Autres articles ===
+      data.forEach(function(item) {
+        // Sauter les NovaStar (déjà affichés) et les châssis/tuiles (déjà comptés dans "Panneaux LED")
+        if (NOVASTAR_IDS.indexOf(item.id) >= 0) return;
+
+        const cls = item.disponible < 5 ? 'stock-row alerte' : 'stock-row';
+        html += '<div class="' + cls + '">';
+        html += '<div class="stock-name">' + item.type + '<div class="stock-sub">sur ' + item.total + ' en stock</div></div>';
+        html += '<div class="stock-qte">' + item.disponible + '</div>';
         html += '</div>';
       });
+
       el.innerHTML = html;
     })
     .catch(function(err) {
@@ -387,9 +406,9 @@ function chargerStock() {
     });
 }
 
-// ===== INVENTAIRE POUR EXTRAS =====
+// ====== INVENTAIRE POUR EXTRAS ======
 function chargerInventairePourExtras() {
-  if (inventaireCache.length > 0) return; // déjà chargé
+  if (inventaireCache.length > 0) return;
   appelAPI('inventaire', 'GET').then(function(data) {
     inventaireCache = data;
   }).catch(function() {});
@@ -408,9 +427,14 @@ function ajouterExtra() {
   div.innerHTML =
     '<select class="extra-select">' + options + '</select>' +
     '<input type="number" class="extra-qte" min="1" value="1" placeholder="Qté">' +
-    '<button class="remove-extra" onclick="this.parentElement.remove()">✕</button>';
+    '<button class="remove-extra" onclick="this.parentElement.remove();calculerApercu();">✕</button>';
+
+  // Recalculer l'aperçu quand on change d'article ou de quantité
+  div.querySelector('.extra-select').addEventListener('change', calculerApercu);
+  div.querySelector('.extra-qte').addEventListener('input', calculerApercu);
 
   list.appendChild(div);
+  calculerApercu();
 }
 
 function getExtras() {
@@ -423,7 +447,7 @@ function getExtras() {
   return extras;
 }
 
-// ===== APERÇU DU KIT =====
+// ====== APERÇU DU KIT ======
 function calculerKitLocal(nbEcrans, extras) {
   const kit = {};
   for (const id in KIT_STANDARD) {
@@ -462,7 +486,7 @@ function calculerApercu() {
   el.innerHTML = html;
 }
 
-// ===== CRÉER LA RÉSERVATION =====
+// ====== CRÉER LA RÉSERVATION ======
 function creerReservation() {
   const data = {
     action: 'creerReservationKit',
@@ -492,6 +516,8 @@ function creerReservation() {
         document.getElementById('fin').value = '';
         document.getElementById('extrasList').innerHTML = '';
         document.getElementById('kitPreview').innerHTML = '<em>Aperçu vide.</em>';
+        chargerStock();
+        chargerReservations();
       } else {
         afficherMessage('❌ ' + res.message, 'error');
       }
@@ -505,7 +531,7 @@ function creerReservation() {
     });
 }
 
-// ===== LISTE DES RÉSERVATIONS =====
+// ====== LISTE DES RÉSERVATIONS ======
 function chargerReservations() {
   const el = document.getElementById('tableReservations');
   el.innerHTML = '<div class="loading"><span class="spinner"></span>Chargement...</div>';
@@ -553,7 +579,6 @@ function afficherReservations() {
 
       let actions = '';
       if (idx === 0) {
-        // Boutons groupés sur la première ligne
         if (r.statut === 'Réservé') {
           actions = '<button class="small success" onclick="changerStatutGroupe(\'' + g + '\', \'Confirmé\')">Confirmer</button>';
           actions += '<button class="small danger" onclick="changerStatutGroupe(\'' + g + '\', \'Annulé\')">Annuler</button>';
@@ -562,8 +587,8 @@ function afficherReservations() {
         }
       }
 
-      html += '<tr>';
-      html += '<td>' + (idx === 0 ? '<strong>' + r.client + '</strong>' : '') + '</td>';
+      html += '<tr class="groupe-ligne">';
+      html += '<td>' + (idx === 0 ? r.client : '') + '</td>';
       html += '<td>' + r.materiel + '</td>';
       html += '<td>' + r.quantite + '</td>';
       html += '<td>' + (idx === 0 ? r.debut : '') + '</td>';
@@ -589,18 +614,20 @@ function changerStatutGroupe(groupe, statut) {
       if (res.succes) {
         afficherMessage('✅ ' + res.message, 'success');
         chargerReservations();
+        chargerStock();
       } else {
         afficherMessage('❌ ' + res.message, 'error');
       }
     });
 }
 
-// ===== INIT =====
+// ====== INIT ======
 document.addEventListener('DOMContentLoaded', function() {
   const auj = aujourdhui();
   document.getElementById('dateVerifDebut').value = auj;
   document.getElementById('dateVerifFin').value = auj;
   chargerStock();
+  chargerReservations();
   chargerInventairePourExtras();
 });
 </script>
