@@ -78,7 +78,7 @@ tr.details-ligne tr:first-child th { font-weight: 700; color: #293a34; font-size
 .actions { display: flex; gap: 4px; flex-wrap: wrap; }
 .message { padding: 10px; border-radius: 4px; margin-bottom: 12px; font-size: 12px; }
 .message.success { background: #d7deca; color: #293a34; border-left: 4px solid #4a7a4a; padding: 12px 15px; line-height: 1.5; }
-.message.error { background: #f5d7d7; color: #842029; border-left: 4px solid #c0392b; padding: 12px 15px; font-size: 13px; line-height: 1.5; box-shadow: 0 2px 8px rgba(192, 57, 43, 0.15); }
+.message.error { background: #f5d7d7; color: #842029; border-left: 4px solid #c0392b; padding: 12px 15px; font-size: 13px; line-height: 1.5; box-shadow: 0 2px 8px rgba(192, 57, 43, 0.15); white-space: pre-line; }
 .message.error strong { color: #842029; display: block; margin-bottom: 4px; }
 .message.error em { color: #5a3c3c; font-style: italic; font-size: 12px; }
 .loading { text-align: center; padding: 15px; color: #5a6b62; font-size: 12px; }
@@ -87,6 +87,7 @@ tr.details-ligne tr:first-child th { font-weight: 700; color: #293a34; font-size
 .empty { text-align: center; padding: 15px; color: #5a6b62; font-size: 12px; }
 .filtre { max-width: 240px; margin-bottom: 10px; font-size: 12px; }
 .legende { font-size: 10px; color: #5a6b62; margin-bottom: 8px; }
+.panel-ajout { padding: 10px; background: #f4f5f1; border: 1px solid #d7deca; border-radius: 4px; margin-top: 8px; }
 </style>
 </head>
 <body>
@@ -176,16 +177,27 @@ const ID_TUILE = "MPI-PLD002-1";
 const KIT_LED_ID = "KIT-LED";
 const KIT_LED_COMPOSANTS = { "MPI-PLD001-1": 1, "MPI-PLD002-1": 3 };
 
+// Articles critiques (indispensables au kit)
+const ARTICLES_CRITIQUES = [
+  "MPI-PLD001-1", "MPI-PLD002-1",
+  "MPI-PLA003", "MPI-PLA007",
+  "MPI-PLA005", "MPI-PLA008",
+  "MPI-NOVASTAR/TB60", "MPI-NOVASTAR/TB8"
+];
+
 let reservationsCache = [];
 let inventaireCache = [];
 let modeActuel = "kit";
+
+function estCritique(idMateriel) {
+  return ARTICLES_CRITIQUES.indexOf(idMateriel) >= 0;
+}
 
 function formatDate(date) {
   return date.getFullYear() + "-" + String(date.getMonth() + 1).padStart(2, '0') + "-" + String(date.getDate()).padStart(2, '0');
 }
 function aujourdhui() { return formatDate(new Date()); }
 
-// ✅ NOUVELLE FONCTION : synchroniser les dates automatiquement
 function synchroniserDates() {
   const debut = document.getElementById('dateVerifDebut').value;
   const fin = document.getElementById('dateVerifFin').value;
@@ -197,11 +209,9 @@ function afficherMessage(texte, type) {
   const el = document.getElementById('message');
   const txt = (texte === undefined || texte === null) ? "Erreur inconnue" : String(texte);
   el.innerHTML = '<div class="message ' + type + '">' + txt + '</div>';
-  const duree = (type === 'error') ? 15000 : 6000;
+  const duree = (type === 'error') ? 18000 : 6000;
   setTimeout(function() { el.innerHTML = ''; }, duree);
-  if (type === 'error') {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
+  if (type === 'error') window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function setMode(m) {
@@ -255,7 +265,6 @@ function chargerStock() {
   const el = document.getElementById('stockGrid');
   el.innerHTML = '<div class="loading"><span class="spinner"></span>Chargement...</div>';
 
-  // ✅ Synchroniser les dates avec le formulaire de réservation
   document.getElementById('debut').value = debut;
   document.getElementById('fin').value = fin;
 
@@ -266,7 +275,6 @@ function chargerStock() {
       data.forEach(function(item) { dispoParId[item.id] = item; });
       let html = '';
 
-      // === CARTE PRINCIPALE : Panneaux LED complets ===
       const chassis = dispoParId[ID_CHASSIS] ? dispoParId[ID_CHASSIS].disponible : 0;
       const tuiles = dispoParId[ID_TUILE] ? dispoParId[ID_TUILE].disponible : 0;
       const panneauxComplets = Math.min(chassis, Math.floor(tuiles / 3));
@@ -277,7 +285,6 @@ function chargerStock() {
       html += '<tr><td>Châssis (MPI-PLD001-1)</td><td>' + chassis + '</td></tr>';
       html += '<tr><td>Tuiles (MPI-PLD002-1)</td><td>' + tuiles + '</td></tr></table></div>';
 
-      // === NovaStar fusionné ===
       let novaDispo = 0, novaTotal = 0, novaDetails = '';
       NOVASTAR_IDS.forEach(function(id) {
         if (dispoParId[id]) {
@@ -294,17 +301,13 @@ function chargerStock() {
         html += '<div class="stock-details" id="d-nova"><table><tr><th>Modèle</th><th>Dispo</th></tr>' + novaDetails + '</table></div>';
       }
 
-      // === Compter les articles cachés (à afficher après clic) ===
       const articlesCaches = data.filter(function(item) {
         return NOVASTAR_IDS.indexOf(item.id) < 0 && item.id !== ID_CHASSIS && item.id !== ID_TUILE;
       });
 
-      // === Bouton "Voir tous les articles" ===
       html += '<div style="grid-column: 1 / -1;">';
       html += '<button class="toggle-articles" onclick="toggleTousArticles()" id="btnTousArticles">📦 Voir tous les articles (' + articlesCaches.length + ')</button>';
       html += '</div>';
-
-      // === Conteneur caché avec tous les articles ===
       html += '<div id="tousArticles" style="display:none; grid-column: 1 / -1;">';
       html += '<div class="stock-grid" style="margin-top: 8px;">';
       articlesCaches.forEach(function(item) {
@@ -331,7 +334,6 @@ function toggleTousArticles() {
   const el = document.getElementById('tousArticles');
   const btn = document.getElementById('btnTousArticles');
   if (!el) return;
-
   if (el.style.display === 'none' || el.style.display === '') {
     el.style.display = 'block';
     btn.innerHTML = '📦 Masquer les autres articles';
@@ -477,7 +479,6 @@ function validerReservation() {
   appelAPI(action, 'POST', payload)
     .then(function(res) {
       console.log("Réponse :", res);
-
       if (res && res.succes) {
         afficherMessage('✅ ' + (res.message || 'Réservation créée'), 'success');
         document.getElementById('client').value = '';
@@ -490,25 +491,17 @@ function validerReservation() {
         chargerReservations();
       } else {
         const msg = (res && res.message) ? res.message : "Réservation impossible";
-        let messageComplet = '❌ <strong>Réservation refusée</strong><br>' + msg;
-
+        let messageComplet = '❌ <strong>Réservation refusée</strong>\n' + msg;
         if (msg.toLowerCase().indexOf('insuffisant') !== -1) {
-          messageComplet += '<br><br>👉 <em>Conseil : vérifiez la disponibilité pour cette période, ou réduisez la quantité / changez les dates.</em>';
-        } else if (msg.toLowerCase().indexOf('matériel inconnu') !== -1) {
-          messageComplet += '<br><br>👉 <em>Conseil : un des articles demandés n\'existe pas dans l\'inventaire.</em>';
-        } else if (msg.toLowerCase().indexOf('vide') !== -1) {
-          messageComplet += '<br><br>👉 <em>Conseil : aucun article à réserver. Vérifiez votre sélection.</em>';
+          messageComplet += '\n\n👉 Conseil : vérifiez la disponibilité pour cette période, ou réduisez la quantité.';
         }
-
         afficherMessage(messageComplet, 'error');
       }
     })
     .catch(function(err) {
       console.error("Erreur :", err);
       if (err.message === 'HTML_RESPONSE') {
-        afficherMessage('❌ <strong>Erreur de connexion</strong><br>Le serveur ne répond pas correctement. Vérifiez votre connexion ou réessayez dans quelques secondes.', 'error');
-      } else if (err.message === 'Réponse invalide') {
-        afficherMessage('❌ <strong>Erreur de communication</strong><br>Le serveur a renvoyé une réponse invalide. Réessayez dans quelques instants.', 'error');
+        afficherMessage('❌ <strong>Erreur de connexion</strong>\nLe serveur ne répond pas. Réessayez dans quelques secondes.', 'error');
       } else {
         afficherMessage('❌ <strong>Erreur</strong> : ' + err.message, 'error');
       }
@@ -595,12 +588,33 @@ function afficherReservations() {
     html += '</td></tr>';
 
     html += '<tr class="details-ligne" id="det-' + g + '"><td colspan="6">';
-    html += '<table><thead><tr><th>Article</th><th>Quantité</th></tr></thead><tbody>';
+    html += '<table><thead><tr><th>Article</th><th>Quantité</th><th style="width:100px;">Actions</th></tr></thead><tbody>';
     lignes.forEach(function(l) {
       const designation = typeParId[l.materiel] || l.materiel;
-      html += '<tr><td>' + designation + '</td><td>' + l.quantite + '</td></tr>';
+      const critique = estCritique(l.materiel);
+      const icone = critique ? '🔴' : '⚪';
+      let actions = '';
+      if (l.statut === 'Réservé' || l.statut === 'Confirmé') {
+        actions = '<button class="small" onclick="event.stopPropagation();modifierLigne(\'' + l.id + '\', \'' + designation.replace(/'/g, "\\'") + '\', ' + l.quantite + ', \'' + l.materiel + '\')" title="Modifier la quantité">✏️</button> ';
+        actions += '<button class="small danger" onclick="event.stopPropagation();supprimerLigne(\'' + l.id + '\', \'' + designation.replace(/'/g, "\\'") + '\', ' + l.quantite + ', \'' + l.materiel + '\')" title="Supprimer cet article">❌</button>';
+      }
+      html += '<tr>';
+      html += '<td>' + icone + ' ' + designation + '</td>';
+      html += '<td>' + l.quantite + '</td>';
+      html += '<td>' + actions + '</td>';
+      html += '</tr>';
     });
-    html += '</tbody></table></td></tr>';
+    html += '</tbody></table>';
+
+    if (premiere.statut === 'Réservé' || premiere.statut === 'Confirmé') {
+      html += '<div style="margin-top:10px;">';
+      html += '<button class="small add-extra" onclick="event.stopPropagation();ajouterArticleGroupe(\'' + g + '\')">➕ Ajouter un article à cette réservation</button>';
+      html += '</div>';
+      html += '<div id="ajout-panel-' + g + '"></div>';
+    }
+
+    html += '<div style="font-size:10px;color:#86868b;margin-top:6px;">🔴 = article critique (indispensable au kit) • ⚪ = article optionnel</div>';
+    html += '</td></tr>';
   });
 
   if (count === 0) html += '<tr><td colspan="6" class="empty">Aucune réservation</td></tr>';
@@ -615,6 +629,138 @@ function toggleGroupe(g) {
   if (det) det.classList.toggle('open');
   if (icon) icon.classList.toggle('open');
   if (row) row.classList.toggle('ouvert');
+}
+
+function modifierLigne(ligneId, designation, ancienneQte, idMateriel) {
+  const critique = estCritique(idMateriel);
+  const avertissement = critique
+    ? '⚠️ ATTENTION : « ' + designation + ' » est un article INDISPENSABLE au fonctionnement des écrans complets.\n\nLe modifier peut rendre l\'ensemble du kit inutilisable.\n\nContinuer ?'
+    : 'ℹ️ « ' + designation + ' » est un article optionnel.\n\nContinuer ?';
+  if (!confirm(avertissement)) return;
+
+  // Calculer le max disponible sur la période
+  let ligneTrouvee = null;
+  reservationsCache.forEach(function(r) { if (r.id === ligneId) ligneTrouvee = r; });
+
+  let infoMax = '';
+  if (ligneTrouvee) {
+    const debut = ligneTrouvee.debut, fin = ligneTrouvee.fin;
+    const auj = aujourdhui();
+    let dejaReserve = 0;
+    reservationsCache.forEach(function(r) {
+      if (r.id === ligneId) return;
+      if (r.materiel !== idMateriel) return;
+      if (r.statut !== 'Réservé' && r.statut !== 'Confirmé') return;
+      if (r.fin < auj) return;
+      if (r.debut <= fin && r.fin >= debut) dejaReserve += r.quantite;
+    });
+    const item = inventaireCache.find(function(i) { return i.id === idMateriel; });
+    if (item) {
+      const dispoMax = item.total - dejaReserve;
+      infoMax = ' (max disponible sur cette période : ' + dispoMax + ')';
+    }
+  }
+
+  const nouvelleQte = prompt('Nouvelle quantité pour « ' + designation + ' »' + infoMax + '\nActuellement : ' + ancienneQte, ancienneQte);
+  if (nouvelleQte === null) return;
+
+  const qte = parseInt(nouvelleQte);
+  if (!qte || qte < 1) { afficherMessage('Quantité invalide', 'error'); return; }
+  if (qte === ancienneQte) { afficherMessage('Aucune modification', 'error'); return; }
+
+  appelAPI('modifierLigne', 'POST', { action: 'modifierLigne', ligneId: ligneId, nouvelleQuantite: qte })
+    .then(function(res) {
+      if (res && res.succes) {
+        afficherMessage('✅ ' + res.message, 'success');
+        chargerReservations();
+        chargerStock();
+      } else {
+        afficherMessage('❌ ' + (res && res.message ? res.message : "Erreur"), 'error');
+      }
+    });
+}
+
+function supprimerLigne(ligneId, designation, quantite, idMateriel) {
+  const critique = estCritique(idMateriel);
+  const avertissement = critique
+    ? '🚨 ATTENTION CRITIQUE 🚨\n\n« ' + designation + ' » (×' + quantite + ') est INDISPENSABLE au fonctionnement des écrans complets.\n\nLa suppression peut :\n• Rendre les écrans inutilisables\n• Empêcher l\'alimentation électrique\n• Bloquer la transmission des données\n\nÊtes-vous ABSOLUMENT sûr ?'
+    : 'ℹ️ Supprimer « ' + designation + ' » (×' + quantite + ') ?\n\nCet article est optionnel.';
+  if (!confirm(avertissement)) return;
+  if (critique) {
+    if (!confirm('Confirmation FINALE : supprimer définitivement « ' + designation + ' » ?')) return;
+  }
+
+  appelAPI('supprimerLigne', 'POST', { action: 'supprimerLigne', ligneId: ligneId })
+    .then(function(res) {
+      if (res && res.succes) {
+        afficherMessage('✅ ' + res.message, 'success');
+        chargerReservations();
+        chargerStock();
+      } else {
+        afficherMessage('❌ ' + (res && res.message ? res.message : "Erreur"), 'error');
+      }
+    });
+}
+
+function ajouterArticleGroupe(groupe) {
+  let options = '<option value="">-- Choisir un article --</option>';
+  inventaireCache.forEach(function(item) {
+    options += '<option value="' + item.id + '">' + item.type + '</option>';
+  });
+
+  const panel = document.getElementById('ajout-panel-' + groupe);
+  if (!panel) return;
+
+  if (panel.innerHTML === '') {
+    panel.innerHTML =
+      '<div class="panel-ajout">' +
+      '<strong style="font-size:12px;">➕ Ajouter un article à cette réservation</strong>' +
+      '<div style="display:grid;grid-template-columns:2fr 1fr auto;gap:6px;margin-top:8px;align-items:center;">' +
+      '<select id="ajout-select-' + groupe + '" style="padding:6px;font-size:12px;">' + options + '</select>' +
+      '<input type="number" id="ajout-qte-' + groupe + '" min="1" value="1" placeholder="Qté" style="padding:6px;font-size:12px;">' +
+      '<button class="small success" onclick="confirmerAjout(\'' + groupe + '\')">Ajouter</button>' +
+      '</div>' +
+      '<div style="margin-top:6px;">' +
+      '<button class="small" onclick="document.getElementById(\'ajout-panel-' + groupe + '\').innerHTML=\'\'">Annuler</button>' +
+      '</div>' +
+      '</div>';
+  } else {
+    panel.innerHTML = '';
+  }
+}
+
+function confirmerAjout(groupe) {
+  const select = document.getElementById('ajout-select-' + groupe);
+  const qteInput = document.getElementById('ajout-qte-' + groupe);
+  const materielId = select.value;
+  const quantite = parseInt(qteInput.value) || 0;
+
+  if (!materielId) { afficherMessage('Veuillez choisir un article', 'error'); return; }
+  if (quantite < 1) { afficherMessage('Quantité invalide', 'error'); return; }
+
+  const item = inventaireCache.find(function(i) { return i.id === materielId; });
+  const designation = item ? item.type : materielId;
+  const critique = estCritique(materielId);
+
+  const avertissement = critique
+    ? '⚠️ « ' + designation + ' » est un article CRITIQUE du kit.\n\nL\'ajouter modifiera l\'ensemble du kit.\n\nConfirmer l\'ajout de ×' + quantite + ' ?'
+    : 'ℹ️ Ajouter « ' + designation + ' » ×' + quantite + ' ?';
+  if (!confirm(avertissement)) return;
+
+  appelAPI('ajouterLigneGroupe', 'POST', {
+    action: 'ajouterLigneGroupe',
+    groupe: groupe,
+    materielId: materielId,
+    quantite: quantite
+  }).then(function(res) {
+    if (res && res.succes) {
+      afficherMessage('✅ ' + res.message, 'success');
+      chargerReservations();
+      chargerStock();
+    } else {
+      afficherMessage('❌ ' + (res && res.message ? res.message : "Erreur"), 'error');
+    }
+  });
 }
 
 function changerStatutGroupe(groupe, statut) {
