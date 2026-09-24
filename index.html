@@ -43,6 +43,8 @@ button.success { background: #4a7a4a; color: #e8f0e0; }
 button.small { width: auto; padding: 4px 10px; font-size: 10px; }
 button.add-extra { background: #d7deca; color: #293a34; padding: 5px 10px; font-size: 11px; width: auto; }
 button.remove-extra { background: #a12c2c; color: #f5e5e5; padding: 3px 7px; font-size: 10px; width: auto; }
+button.toggle-articles { background: #d7deca; color: #293a34; padding: 8px 14px; font-size: 12px; width: 100%; margin-top: 8px; text-transform: none; letter-spacing: 0; font-weight: 600; }
+button.toggle-articles:hover { background: #c8cfc0; }
 .mode-switch { display: flex; gap: 6px; margin-bottom: 12px; }
 .mode-btn { flex: 1; padding: 8px 12px; background: #f4f5f1; color: #5a6b62; border: 2px solid #d7deca; border-radius: 4px; cursor: pointer; font-weight: 600; font-size: 12px; text-align: center; transition: all 0.15s; }
 .mode-btn.active { background: #293a34; color: #d7deca; border-color: #293a34; }
@@ -99,9 +101,9 @@ tr.details-ligne tr:first-child th { font-weight: 700; color: #293a34; font-size
 <div class="card">
   <h2>📦 Stock
     <span style="font-size:11px;color:#5a6b62;font-weight:400;margin-left:8px;">
-      <input type="date" id="dateVerifDebut" style="width:130px;display:inline-block;padding:4px 6px;font-size:11px;">
+      <input type="date" id="dateVerifDebut" style="width:130px;display:inline-block;padding:4px 6px;font-size:11px;" onchange="synchroniserDates()">
       →
-      <input type="date" id="dateVerifFin" style="width:130px;display:inline-block;padding:4px 6px;font-size:11px;">
+      <input type="date" id="dateVerifFin" style="width:130px;display:inline-block;padding:4px 6px;font-size:11px;" onchange="synchroniserDates()">
       <button class="small" onclick="chargerStock()" style="margin-left:6px;">Vérifier</button>
     </span>
   </h2>
@@ -183,6 +185,14 @@ function formatDate(date) {
 }
 function aujourdhui() { return formatDate(new Date()); }
 
+// ✅ NOUVELLE FONCTION : synchroniser les dates automatiquement
+function synchroniserDates() {
+  const debut = document.getElementById('dateVerifDebut').value;
+  const fin = document.getElementById('dateVerifFin').value;
+  if (debut) document.getElementById('debut').value = debut;
+  if (fin) document.getElementById('fin').value = fin;
+}
+
 function afficherMessage(texte, type) {
   const el = document.getElementById('message');
   const txt = (texte === undefined || texte === null) ? "Erreur inconnue" : String(texte);
@@ -244,12 +254,19 @@ function chargerStock() {
   const fin = document.getElementById('dateVerifFin').value || aujourdhui();
   const el = document.getElementById('stockGrid');
   el.innerHTML = '<div class="loading"><span class="spinner"></span>Chargement...</div>';
+
+  // ✅ Synchroniser les dates avec le formulaire de réservation
+  document.getElementById('debut').value = debut;
+  document.getElementById('fin').value = fin;
+
   const url = API_URL + '?action=disponibilite&debut=' + debut + '&fin=' + fin + '&t=' + Date.now();
   fetchJSON(url)
     .then(function(data) {
       const dispoParId = {};
       data.forEach(function(item) { dispoParId[item.id] = item; });
       let html = '';
+
+      // === CARTE PRINCIPALE : Panneaux LED complets ===
       const chassis = dispoParId[ID_CHASSIS] ? dispoParId[ID_CHASSIS].disponible : 0;
       const tuiles = dispoParId[ID_TUILE] ? dispoParId[ID_TUILE].disponible : 0;
       const panneauxComplets = Math.min(chassis, Math.floor(tuiles / 3));
@@ -259,6 +276,8 @@ function chargerStock() {
       html += '<div class="stock-details" id="d-led"><table><tr><th>Composant</th><th>Dispo</th></tr>';
       html += '<tr><td>Châssis (MPI-PLD001-1)</td><td>' + chassis + '</td></tr>';
       html += '<tr><td>Tuiles (MPI-PLD002-1)</td><td>' + tuiles + '</td></tr></table></div>';
+
+      // === NovaStar fusionné ===
       let novaDispo = 0, novaTotal = 0, novaDetails = '';
       NOVASTAR_IDS.forEach(function(id) {
         if (dispoParId[id]) {
@@ -274,13 +293,28 @@ function chargerStock() {
         html += '<div class="stock-qte">' + novaDispo + '</div></div>';
         html += '<div class="stock-details" id="d-nova"><table><tr><th>Modèle</th><th>Dispo</th></tr>' + novaDetails + '</table></div>';
       }
-      data.forEach(function(item) {
-        if (NOVASTAR_IDS.indexOf(item.id) >= 0) return;
+
+      // === Compter les articles cachés (à afficher après clic) ===
+      const articlesCaches = data.filter(function(item) {
+        return NOVASTAR_IDS.indexOf(item.id) < 0 && item.id !== ID_CHASSIS && item.id !== ID_TUILE;
+      });
+
+      // === Bouton "Voir tous les articles" ===
+      html += '<div style="grid-column: 1 / -1;">';
+      html += '<button class="toggle-articles" onclick="toggleTousArticles()" id="btnTousArticles">📦 Voir tous les articles (' + articlesCaches.length + ')</button>';
+      html += '</div>';
+
+      // === Conteneur caché avec tous les articles ===
+      html += '<div id="tousArticles" style="display:none; grid-column: 1 / -1;">';
+      html += '<div class="stock-grid" style="margin-top: 8px;">';
+      articlesCaches.forEach(function(item) {
         const cls = item.disponible < 5 ? 'stock-row alerte' : 'stock-row';
         html += '<div class="' + cls + '">';
         html += '<div class="stock-name">' + item.type + '<div class="stock-sub">sur ' + item.total + ' en stock</div></div>';
         html += '<div class="stock-qte">' + item.disponible + '</div></div>';
       });
+      html += '</div></div>';
+
       el.innerHTML = html;
     })
     .catch(function(err) {
@@ -291,6 +325,21 @@ function chargerStock() {
 function toggleDetails(id) {
   const el = document.getElementById(id);
   if (el) el.classList.toggle('open');
+}
+
+function toggleTousArticles() {
+  const el = document.getElementById('tousArticles');
+  const btn = document.getElementById('btnTousArticles');
+  if (!el) return;
+
+  if (el.style.display === 'none' || el.style.display === '') {
+    el.style.display = 'block';
+    btn.innerHTML = '📦 Masquer les autres articles';
+  } else {
+    el.style.display = 'none';
+    const nb = el.querySelectorAll('.stock-row').length;
+    btn.innerHTML = '📦 Voir tous les articles (' + nb + ')';
+  }
 }
 
 function chargerInventairePourExtras() {
@@ -473,18 +522,17 @@ function validerReservation() {
 function chargerReservations() {
   const el = document.getElementById('tableReservations');
   el.innerHTML = '<div class="loading"><span class="spinner"></span>Chargement...</div>';
-  
-  // S'assurer que l'inventaire est chargé avant d'afficher
+
   if (inventaireCache.length === 0) {
     appelAPI('inventaire', 'GET').then(function(data) {
       inventaireCache = data;
       inventaireCache.unshift({ id: KIT_LED_ID, type: "🎬 Panneaux LED complets (châssis + 3 tuiles)", total: 0 });
-      appelAPI('reservations', 'GET').then(function(data) { 
-        reservationsCache = data; 
-        afficherReservations(); 
+      appelAPI('reservations', 'GET').then(function(data) {
+        reservationsCache = data;
+        afficherReservations();
       });
-    }).catch(function(err) { 
-      el.innerHTML = '<div class="message error">Erreur : ' + err.message + '</div>'; 
+    }).catch(function(err) {
+      el.innerHTML = '<div class="message error">Erreur : ' + err.message + '</div>';
     });
   } else {
     appelAPI('reservations', 'GET')
@@ -497,11 +545,8 @@ function afficherReservations() {
   const el = document.getElementById('tableReservations');
   const filtre = document.getElementById('filtreClient').value.toLowerCase();
 
-  // Construire un dictionnaire ID → Type depuis l'inventaire
   const typeParId = {};
-  inventaireCache.forEach(function(item) {
-    typeParId[item.id] = item.type;
-  });
+  inventaireCache.forEach(function(item) { typeParId[item.id] = item.type; });
 
   const groupes = {};
   reservationsCache.forEach(function(r) {
@@ -549,7 +594,6 @@ function afficherReservations() {
     }
     html += '</td></tr>';
 
-    // Détails : afficher la désignation au lieu de l'ID
     html += '<tr class="details-ligne" id="det-' + g + '"><td colspan="6">';
     html += '<table><thead><tr><th>Article</th><th>Quantité</th></tr></thead><tbody>';
     lignes.forEach(function(l) {
