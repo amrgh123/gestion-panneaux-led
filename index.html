@@ -177,7 +177,6 @@ const ID_TUILE = "MPI-PLD002-1";
 const KIT_LED_ID = "KIT-LED";
 const KIT_LED_COMPOSANTS = { "MPI-PLD001-1": 1, "MPI-PLD002-1": 3 };
 
-// Articles critiques (indispensables au kit)
 const ARTICLES_CRITIQUES = [
   "MPI-PLD001-1", "MPI-PLD002-1",
   "MPI-PLA003", "MPI-PLA007",
@@ -555,7 +554,7 @@ function afficherReservations() {
   });
 
   let html = '<table><thead><tr>';
-  html += '<th style="width:50%;">Client / Articles</th><th>Qté</th><th>Début</th><th>Fin</th><th>Statut</th><th>Actions</th>';
+  html += '<th style="width:50%;">Client / Articles</th><th>Panneaux</th><th>Début</th><th>Fin</th><th>Statut</th><th>Actions</th>';
   html += '</tr></thead><tbody>';
 
   let count = 0;
@@ -568,13 +567,27 @@ function afficherReservations() {
     if (premiere.statut === 'Confirmé') badgeClass = 'confirme';
     else if (premiere.statut === 'Terminé') badgeClass = 'termine';
 
-    const totalArticles = lignes.reduce(function(sum, l) { return sum + l.quantite; }, 0);
+    // Calculer le nombre de panneaux LED complets = min(nb châssis, floor(nb tuiles / 3))
+    let nbChassis = 0, nbTuiles = 0;
+    lignes.forEach(function(l) {
+      if (l.materiel === ID_CHASSIS) nbChassis += l.quantite;
+      if (l.materiel === ID_TUILE) nbTuiles += l.quantite;
+    });
+    const nbPanneaux = Math.min(nbChassis, Math.floor(nbTuiles / 3));
+
+    let qteAffichee;
+    if (nbPanneaux > 0) {
+      qteAffichee = '<strong>' + nbPanneaux + '</strong> <span style="font-size:10px;color:#5a6b62;">panneaux</span>';
+    } else {
+      qteAffichee = '<span style="color:#86868b;font-size:11px;">—</span>';
+    }
 
     html += '<tr class="groupe-ligne" id="row-' + g + '" onclick="toggleGroupe(\'' + g + '\')">';
     html += '<td><span class="expand-icon" id="icon-' + g + '">▶</span>';
     html += '<strong>' + premiere.client + '</strong>';
     html += ' <span style="color:#5a6b62;font-size:11px;font-weight:normal;">(' + lignes.length + ' article' + (lignes.length > 1 ? 's' : '') + ')</span></td>';
-    html += '<td>' + totalArticles + '</td><td>' + premiere.debut + '</td><td>' + premiere.fin + '</td>';
+    html += '<td>' + qteAffichee + '</td>';
+    html += '<td>' + premiere.debut + '</td><td>' + premiere.fin + '</td>';
     html += '<td><span class="badge ' + badgeClass + '">' + premiere.statut + '</span></td>';
     html += '<td class="actions">';
     if (premiere.statut === 'Réservé') {
@@ -638,7 +651,6 @@ function modifierLigne(ligneId, designation, ancienneQte, idMateriel) {
     : 'ℹ️ « ' + designation + ' » est un article optionnel.\n\nContinuer ?';
   if (!confirm(avertissement)) return;
 
-  // Calculer le max disponible sur la période
   let ligneTrouvee = null;
   reservationsCache.forEach(function(r) { if (r.id === ligneId) ligneTrouvee = r; });
 
